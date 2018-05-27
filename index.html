@@ -38,7 +38,7 @@
 
 
 
-<meta property="og:updated_time" content="2018-05-27T01:47:22&#43;08:00"/>
+<meta property="og:updated_time" content="2018-05-27T20:00:38&#43;08:00"/>
 
 
 
@@ -132,14 +132,59 @@
       
       <div class="blah w-100">
         <h1 class="f3 fw1 athelas mt0 lh-title">
-          <a href="/posts/my-first-post/" class="color-inherit dim link">
-            My First Post
+          <a href="/posts/java%E5%92%8Cdocker%E9%99%90%E5%88%B6%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B%E5%84%BF%E8%AF%91/" class="color-inherit dim link">
+            Java和Docker限制的那些事儿(译)
             </a>
         </h1>
         <div class="f6 f5-l lh-copy nested-copy-line-height nested-links">
-          
+          Java和Docker限制的那些事儿(译) 原文链接
+TLDR; Java和Docker不是天然的朋友。 Docker可以设置内存和CPU限制，而Java不能自动检测到。使用Java的Xmx标识（繁琐/重复）或新的实验性JVM标识，我们可以解决这个问题。
+加强Docker容器与Java10集成 - Docker官方博客在最新版本的JAVA的OpenJ9和OpenJDK10中彻底解决了这个问题。
+虚拟化中的不匹配 JAVA和Docker的结合并不是完美匹配的，最初的时候离完美匹配有相当大的距离。对于初学者来说，JVM的全部设想就是，虚拟机可以让程序与底层硬件无关。
+那么，把我们的java应用打包到JVM中，然后整个再塞进docker容器中，能给我们带来啥好处呢？大多数情况下，你只是在复制JVMs和linux容器，除了浪费更多的内存，没任何好处。感觉这样子挺傻的。
+不过，docker可以把你的程序，设置，特定的JDK，linux设置和应用服务器，还有其他工具打包在一起，当做一个东西。站在devops/cloud的角度来看，这样一个完整的容器有着更高层次的封装。
+问题一：内存 时至今日，绝大多数产品级应用仍然在使用Java 8（或者更旧的版本），而这可能会带来问题。Java 8(update 131之前的版本)跟docker无法很好地一起工作。问题是在你的机器上，jvm的可用内存和CPU数量并不是docker允许你使用的可用内存和CPU数量。
+比如，如果你限制了你的docker容器只能使用100MB内存，但是呢，旧版本的java并不能识别这个限制。JAVA看不到这个限制。JVM会要求更多内存，而且远超这个限制。如果使用太多内存，Docker将采取行动并杀死容器内的进程！JAVA进程被干掉了，很明显，这并不是我们想要的。。。
+为了解决这个问题，你需要给java指定一个最大内存限制。在旧版本的JAVA（8u131之前），你需要在容器中通过设置-Xmx来限制堆大小。这感觉不太对，你可不想定义这些限制两次，也不太想在你的容器中来定义。
+幸运的是我们现在有了更好的方式来解决这个问题。从JAVA9之后（8u131+），jvm增加了如下标志:
+-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap  这些标志强制jvm检查linux的cgroup配置，docker是通过cgroup来实现最大内存设置的。现在，如果你的应用到达了docker设置的限制（比如500MB），JVM是可以看到这个限制的。JVM将会尝试GC操作。如果仍然超过内存限制，JVM就会做它该做的事情，抛出OutOfMemoryException。也就是说，JVM能够看到docker的这些设置。
+从JAVA10之后（参考下面的测试），这些体验标志位是默认开启的，也可以使用-XX:+UseContainerSupport来使能（你可以通过设置-XX:-UseContainerSupport来禁止这些行为）。
+问题二：CPU 第二个问题是类似的，但它与CPU有关。简而言之，JVM将查看硬件并检测CPU的数量。它会优化你的runtime以使用这些CPUs。但是同样的情况，这里还有另一个不匹配，Docker可能不允许你使用所有这些CPUs。可惜的是，这在Java 8或Java 9中并没有修复，但是在Java 10中得到了解决。 从Java 10开始，可用的CPUs的计算将采用以不同的方式（默认情况下）解决此问题（同样是通过UseContainerSupport）。
+Java和Docker的内存处理测试 作为一个有趣的练习，让我们验证并测试Docker如何使用几个不同的JVM版本/标志甚至不同的JVM来处理内存不足。
+首先，我们创建一个测试应用程序，它只是简单地“吃”内存并且不释放它。
+import java.util.ArrayList; import java.util.List; public class MemEat { public static void main(String[] args) { List l = new ArrayList&lt;&gt;(); while (true) { byte b[] = new byte[1048576]; l.add(b); Runtime rt = Runtime.getRuntime(); System.out.println( &quot;free memory: &quot; + rt.
         </div>
-          <a href="/posts/my-first-post/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+          <a href="/posts/java%E5%92%8Cdocker%E9%99%90%E5%88%B6%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B%E5%84%BF%E8%AF%91/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+        
+      </div>
+    </div>
+  </div>
+</article>
+
+          </div>
+        
+          <div class="relative w-100 mb4">
+            
+<article class="bb b--black-10">
+  <div class="db pv4 ph3 ph0-l no-underline dark-gray">
+    <div class="flex flex-column flex-row-ns">
+      
+      <div class="blah w-100">
+        <h1 class="f3 fw1 athelas mt0 lh-title">
+          <a href="/posts/%E5%8A%A0%E5%BC%BAdocker%E5%AE%B9%E5%99%A8%E4%B8%8Ejava10%E9%9B%86%E6%88%90%E8%AF%91/" class="color-inherit dim link">
+            加强Docker容器与Java10集成(译)
+            </a>
+        </h1>
+        <div class="f6 f5-l lh-copy nested-copy-line-height nested-links">
+          加强Docker容器与Java10集成(译) 原文链接
+很多运行在JAVA虚拟机(JVM)中的应用，包括数据服务如Apache Spark和Kafka以及传统企业应用，都运行在容器中。最近，运行在容器里的JVM出现了由于内存和CPU资源限制和使用率导致性能损失问题。这是因为JAVA意识不到自己运行在容器中。随着JAVA 10的发布，JVM终于可以通过设置cgroup来实现这些约束。内存和CPU约束都可以直接在容器里被用来管理JAVA应用，包括： * 在容器里面设置内存约束 * 在容器里设置可用的CPUs个数 * 在容器里设置CPU约束
+JAVA 10的这些优化在Docker for mac/windows和Docker企业版均可正常运行。
+容器内存限制 一直到JAVA 9，JVM依然不能够通过在容器中使用标识来识别内存或CPU限制。在Java 10中，内存限制可以被自动识别，而且这个特性是默认支持的。
+JAVA对服务器进行分级定义，如果一台服务器有2CPUs和2GB内存，那么默认的堆栈大小是1/4的物理内存。假设一个安装了docker企业版的服务器有4CPUs和2GB内存。我们来比较分别比较运行JAVA 8和JAVA 10的容器的区别。先看JAVA 8：
+docker container run -it -m512 --entrypoint bash openjdk:latest $ docker-java-home/bin/java -XX:+PrintFlagsFinal -version | grep MaxHeapSize uintx MaxHeapSize := 524288000 {product} openjdk version &quot;1.8.0_162&quot;  我们可以看到最大的堆栈大小是512MB，刚好（1/4）X2GB，只是通过docker EE自动设置的，而不是通过设置容器来实现的。做个比较，我们看下在JAVA 10环境下运行同样的命令是什么结果。
+docker container run -it -m512M --entrypoint bash openjdk:10-jdk $ docker-java-home/bin/java -XX:+PrintFlagsFinal -version | grep MaxHeapSize size_t MaxHeapSize = 134217728 {product} {ergonomic} openjdk version &quot;10&quot; 2018-03-20  上面的结果显示，容器里的内存限制非常接近我们期望的128MB。
+        </div>
+          <a href="/posts/%E5%8A%A0%E5%BC%BAdocker%E5%AE%B9%E5%99%A8%E4%B8%8Ejava10%E9%9B%86%E6%88%90%E8%AF%91/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
         
       </div>
     </div>
