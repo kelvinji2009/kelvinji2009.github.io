@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>加强Docker容器与Java10集成(译) · Stay focused and keep hacking.</title>
+  <meta name="author" content="" />
+
+  
+  <meta name="keywords" content="service mesh">	
+  
+
+  
+  <meta name="description" content="Stay focused and keep hacking.">	
+  
+
+  <meta name="generator" content="Hugo 0.41" />
+
+  <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  
+  <link href="https://kelvinji2009.github.io/css/animate.css" rel="stylesheet">
+
+  
+  
+    <link href="https://kelvinji2009.github.io/css/style.violet.css" rel="stylesheet" id="theme-stylesheet">
+  
+
+
+  
+  <link href="https://kelvinji2009.github.io/css/custom.css" rel="stylesheet">
+
+  
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+  <link rel="shortcut icon" href="https://kelvinji2009.github.io/img/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="https://kelvinji2009.github.io/img/apple-touch-icon.png" />
+  
+
+  <link href="https://kelvinji2009.github.io/css/owl.carousel.css" rel="stylesheet">
+  <link href="https://kelvinji2009.github.io/css/owl.theme.css" rel="stylesheet">
+
+  <link rel="alternate" href="https://kelvinji2009.github.io/index.xml" type="application/rss+xml" title="kelvinji2009">
+
+  
+  <link rel="stylesheet" href="https://kelvinji2009.github.io/css/prism.css" />
+
+  
+  <meta property="og:title" content="加强Docker容器与Java10集成(译)" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/blog/%E5%8A%A0%E5%BC%BAdocker%E5%AE%B9%E5%99%A8%E4%B8%8Ejava10%E9%9B%86%E6%88%90%E8%AF%91//" />
+  <meta property="og:image" content="img/logo.png" />
+
+  
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+</head>
+
+
+  <body>
+
+    <div id="all">
+
+        <header>
+
+          <div class="navbar-affixed-top" data-spy="affix" data-offset-top="200">
+
+    <div class="navbar navbar-default yamm" role="navigation" id="navbar">
+
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand home" href="https://kelvinji2009.github.io/">
+                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="加强Docker容器与Java10集成(译) logo" class="hidden-xs hidden-sm">
+                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="加强Docker容器与Java10集成(译) logo" class="visible-xs visible-sm">
+                    <span class="sr-only">加强Docker容器与Java10集成(译) - 跳到主页</span>
+                </a>
+                <div class="navbar-buttons">
+                    <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
+                      <span class="sr-only">切换导航</span>
+                        <i class="fa fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            
+
+            <div class="navbar-collapse collapse" id="navigation">
+                <ul class="nav navbar-nav navbar-right">
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/">主页</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/blog/">博客</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/contact/">联系我</a>
+                    
+                  </li>
+                  
+                </ul>
+            </div>
+            
+
+            <div class="collapse clearfix" id="search">
+
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                        <span class="input-group-btn">
+
+                    <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
+
+                </span>
+                    </div>
+                </form>
+
+            </div>
+            
+
+        </div>
+    </div>
+    
+
+</div>
+
+
+
+
+        </header>
+
+        <div id="heading-breadcrumbs">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>加强Docker容器与Java10集成(译)</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div id="content">
+            <div class="container">
+
+                <div class="row">
+
+                    
+
+                    <div class="col-md-9" id="blog-post">
+
+                        <p class="text-muted text-uppercase mb-small text-left">
+                        作者 <a href="https://kelvinji2009.github.io">kelvinji2009</a>
+                        
+                        |
+                        
+                        
+                        
+                        归档于<a href="https://kelvinji2009.github.io/categories/docker">docker</a>
+                        
+                        |
+                        
+                        发表于
+                        2018-05-27
+                        |
+                        
+                        
+                        
+                        <a href="https://kelvinji2009.github.io/tags/docker/">#docker</a>&nbsp;
+                        
+                        <a href="https://kelvinji2009.github.io/tags/java10/">#java10</a>&nbsp;
+                        
+                        
+                        
+                        </p>
+                        <div id="post-content">
+                          
+
+<h1 id="加强docker容器与java10集成-译">加强Docker容器与Java10集成(译)</h1>
+
+<p><a href="https://blog.docker.com/2018/04/improved-docker-container-integration-with-java-10/">原文链接</a></p>
+
+<p>很多运行在JAVA虚拟机(JVM)中的应用，包括数据服务如Apache Spark和Kafka以及传统企业应用，都运行在容器中。最近，运行在容器里的JVM出现了由于内存和CPU资源限制和使用率导致性能损失问题。这是因为JAVA意识不到自己运行在容器中。随着JAVA 10的发布，JVM终于可以通过设置cgroup来实现这些约束。内存和CPU约束都可以直接在容器里被用来管理JAVA应用，包括：
+* 在容器里面设置内存约束
+* 在容器里设置可用的CPUs个数
+* 在容器里设置CPU约束</p>
+
+<p>JAVA 10的这些优化在Docker for mac/windows和Docker企业版均可正常运行。</p>
+
+<h2 id="容器内存限制">容器内存限制</h2>
+
+<p>一直到JAVA 9，JVM依然不能够通过在容器中使用标识来识别内存或CPU限制。在Java 10中，内存限制可以被自动识别，而且这个特性是默认支持的。</p>
+
+<p>JAVA对服务器进行分级定义，如果一台服务器有2CPUs和2GB内存，那么默认的堆栈大小是1/4的物理内存。假设一个安装了docker企业版的服务器有4CPUs和2GB内存。我们来比较分别比较运行JAVA 8和JAVA 10的容器的区别。先看JAVA 8：</p>
+
+<pre><code class="language-shell">docker container run -it -m512 --entrypoint bash openjdk:latest
+
+$ docker-java-home/bin/java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+    uintx MaxHeapSize                              := 524288000                          {product}
+openjdk version &quot;1.8.0_162&quot;
+</code></pre>
+
+<p>我们可以看到最大的堆栈大小是512MB，刚好（1/4）X2GB，只是通过docker EE自动设置的，而不是通过设置容器来实现的。做个比较，我们看下在JAVA 10环境下运行同样的命令是什么结果。</p>
+
+<pre><code class="language-shell">docker container run -it -m512M --entrypoint bash openjdk:10-jdk
+
+$ docker-java-home/bin/java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+   size_t MaxHeapSize                              = 134217728                                {product} {ergonomic}
+openjdk version &quot;10&quot; 2018-03-20
+</code></pre>
+
+<p>上面的结果显示，容器里的内存限制非常接近我们期望的128MB。</p>
+
+<h2 id="设置可用cpus个数">设置可用CPUs个数</h2>
+
+<p>默认情况下，每个容器可以获取到主机的CPU时钟周期是没有限制的。各种限制可以被设置来约束某个指定的容器可以获取的主机CPU时钟周期。
+JAVA 10能够识别这些限制：</p>
+
+<pre><code class="language-shell">docker container run -it --cpus 2 openjdk:10-jdk
+jshell&gt; Runtime.getRuntime().availableProcessors()
+$1 ==&gt; 2
+</code></pre>
+
+<p>所有分配给Docker EE的CPUs均获得同样比例的CPU时钟周期。这个比例可以通过调整CPU共享比重（相对于其他所有运行的容器的比重）来进行修改。
+这个比例只在运行CPU敏感的进程才生效。当一个容器中的任务是空闲状态，那么其他容器可以使用剩余的全部CPU时间。然后真实的CPU时间统计则相当依赖系统上运行的容器的个数。这些在JAVA 10中都可以设置：</p>
+
+<pre><code class="language-shell">docker container run -it --cpu-shares 2048 openjdk:10-jdk
+jshell&gt; Runtime.getRuntime().availableProcessors()
+$1 ==&gt; 2
+</code></pre>
+
+<p>JAVA 10中也可以设置CPU集合约束（允许哪些CPU执行）。</p>
+
+<pre><code class="language-shell">docker run -it --cpuset-cpus=&quot;1,2,3&quot; openjdk:10-jdk
+jshell&gt; Runtime.getRuntime().availableProcessors()
+$1 ==&gt; 3
+</code></pre>
+
+<h2 id="分配内存和cpu">分配内存和CPU</h2>
+
+<p>使用Java 10，可以使用容器设置来估计部署应用程序所需的内存和CPU的分配。我们假设已经确定了容器中运行的每个进程的内存堆和CPU要求，并设置了JAVA_OPTS。例如，如果您有一个跨10个节点分布的应用程序，五个节点需要512Mb的内存，每个需要1024个CPU-shares，另外五个节点需要256Mb，每个512个CPU-shares。请注意，1个CPU份额比例由1024表示。</p>
+
+<p>对于内存，应用程序需要至少分配5Gb。
+512Mb x 5 = 2.56 Gb
+256Mb x 5 = 1.28 Gb</p>
+
+<p>该应用程序需要8个CPU才能高效运行。
+1024 x 5 = 5 CPUs
+512 x 5 = 3 CPUs</p>
+
+<p>最佳实践建议分析应用程序以确定运行在JVM中的每个进程的内存和CPU分配。但是，在调整容器大小以防止Java应用程序中的内存不足错误以及分配足够的CPU来处理工作负载时，Java 10消除了这些猜测。</p>
+
+                        </div>
+                        
+                        
+
+                    </div>
+                    
+
+                    
+
+                    
+
+                    <div class="col-md-3">
+
+                        
+
+                        
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">搜索</h3>
+    </div>
+
+    <div class="panel-body">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" role="search">
+            <div class="input-group">
+                <input type="search" name="q" class="form-control" placeholder="搜索">
+                <input type="hidden" name="sitesearch" value="https://kelvinji2009.github.io/">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">分类</h3>
+    </div>
+
+    <div class="panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            
+            <li><a href="https://kelvinji2009.github.io/categories/docker">docker (2)</a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="panel sidebar-menu">
+    <div class="panel-heading">
+      <h3 class="panel-title">标签</h3>
+    </div>
+
+    <div class="panel-body">
+        <ul class="tag-cloud">
+            
+            <li><a href="https://kelvinji2009.github.io/tags/docker"><i class="fa fa-tags"></i> docker</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/java10"><i class="fa fa-tags"></i> java10</a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+                        
+
+                    </div>
+                    
+
+                    
+
+                </div>
+                
+
+            </div>
+            
+        </div>
+        
+
+        <footer id="footer">
+    <div class="container">
+
+        
+        <div class="col-md-4 col-sm-6">
+            <h4>关于我们</h4>
+
+            kelvinji2009
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+        <div class="col-md-4 col-sm-6">
+
+             
+            <h4>最新博客</h4>
+
+            <div class="blog-entries">
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/java%E5%92%8Cdocker%E9%99%90%E5%88%B6%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B%E5%84%BF%E8%AF%91/">
+                          
+                          <img src="https://ws1.sinaimg.cn/large/00704eQkgy1frjbqc9faoj30rs0kuwnv.jpg" class="img-responsive" alt="Java和Docker限制的那些事儿(译)">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/java%E5%92%8Cdocker%E9%99%90%E5%88%B6%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B%E5%84%BF%E8%AF%91/">Java和Docker限制的那些事儿(译)</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/%E5%8A%A0%E5%BC%BAdocker%E5%AE%B9%E5%99%A8%E4%B8%8Ejava10%E9%9B%86%E6%88%90%E8%AF%91/">
+                          
+                          <img src="https://ws1.sinaimg.cn/large/00704eQkgy1frk001fkixj30rs0ku4qp.jpg" class="img-responsive" alt="加强Docker容器与Java10集成(译)">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/%E5%8A%A0%E5%BC%BAdocker%E5%AE%B9%E5%99%A8%E4%B8%8Ejava10%E9%9B%86%E6%88%90%E8%AF%91/">加强Docker容器与Java10集成(译)</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/">
+                          
+                            <img src="https://kelvinji2009.github.io/img/placeholder.png" class="img-responsive" alt="Blogs">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/">Blogs</a></h5>
+                    </div>
+                </div>
+                
+            </div>
+
+            <hr class="hidden-md hidden-lg">
+             
+
+        </div>
+        
+
+        
+        <div class="col-md-4 col-sm-6">
+
+          <h4>联系</h4>
+
+            <p><p><strong>未公开</strong></p>
+
+
+            <a href="/contact" class="btn btn-small btn-template-main">跳到联系页面</a>
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+    </div>
+    
+</footer>
+
+
+
+
+
+
+
+<div id="copyright">
+    <div class="container">
+        <div class="col-md-12">
+            
+            <p class="pull-left">Copyright ©️ 2018, kelvinji2009 all rights reserved.</p>
+            
+            <p class="pull-right">
+              模板来自 <a href="http://bootstrapious.com/free-templates">Bootstrapious</a>.
+              
+
+              移植到 Hugo 来自 <a href="https://github.com/devcows/hugo-universal-theme">DevCows</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    </div>
+    
+
+    <script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0/jquery.counterup.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-parallax/1.1.3/jquery-parallax.js"></script>
+<script src="https://kelvinji2009.github.io/js/front.js"></script>
+
+
+<script src="https://kelvinji2009.github.io/js/owl.carousel.min.js"></script>
+
+<script src="https://kelvinji2009.github.io/js/prism.js"></script>
+
+
+  </body>
+</html>

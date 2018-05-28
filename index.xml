@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Stay focused and keep hacking</title>
+    <title>kelvinji2009</title>
     <link>https://kelvinji2009.github.io/</link>
-    <description>Recent content on Stay focused and keep hacking</description>
+    <description>Recent content on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>zh</language>
     <lastBuildDate>Sun, 27 May 2018 20:00:38 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/index.xml" rel="self" type="application/rss+xml" />
@@ -13,10 +13,10 @@
     
     <item>
       <title>Java和Docker限制的那些事儿(译)</title>
-      <link>https://kelvinji2009.github.io/posts/java%E5%92%8Cdocker%E9%99%90%E5%88%B6%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B%E5%84%BF%E8%AF%91/</link>
+      <link>https://kelvinji2009.github.io/blog/java%E5%92%8Cdocker%E9%99%90%E5%88%B6%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B%E5%84%BF%E8%AF%91/</link>
       <pubDate>Sun, 27 May 2018 20:00:38 +0800</pubDate>
       
-      <guid>https://kelvinji2009.github.io/posts/java%E5%92%8Cdocker%E9%99%90%E5%88%B6%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B%E5%84%BF%E8%AF%91/</guid>
+      <guid>https://kelvinji2009.github.io/blog/java%E5%92%8Cdocker%E9%99%90%E5%88%B6%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B%E5%84%BF%E8%AF%91/</guid>
       <description>Java和Docker限制的那些事儿(译) 原文链接
 TLDR; Java和Docker不是天然的朋友。 Docker可以设置内存和CPU限制，而Java不能自动检测到。使用Java的Xmx标识（繁琐/重复）或新的实验性JVM标识，我们可以解决这个问题。
 加强Docker容器与Java10集成 - Docker官方博客在最新版本的JAVA的OpenJ9和OpenJDK10中彻底解决了这个问题。
@@ -37,10 +37,10 @@ import java.util.ArrayList; import java.util.List; public class MemEat { public 
     
     <item>
       <title>加强Docker容器与Java10集成(译)</title>
-      <link>https://kelvinji2009.github.io/posts/%E5%8A%A0%E5%BC%BAdocker%E5%AE%B9%E5%99%A8%E4%B8%8Ejava10%E9%9B%86%E6%88%90%E8%AF%91/</link>
+      <link>https://kelvinji2009.github.io/blog/%E5%8A%A0%E5%BC%BAdocker%E5%AE%B9%E5%99%A8%E4%B8%8Ejava10%E9%9B%86%E6%88%90%E8%AF%91/</link>
       <pubDate>Sun, 27 May 2018 01:47:22 +0800</pubDate>
       
-      <guid>https://kelvinji2009.github.io/posts/%E5%8A%A0%E5%BC%BAdocker%E5%AE%B9%E5%99%A8%E4%B8%8Ejava10%E9%9B%86%E6%88%90%E8%AF%91/</guid>
+      <guid>https://kelvinji2009.github.io/blog/%E5%8A%A0%E5%BC%BAdocker%E5%AE%B9%E5%99%A8%E4%B8%8Ejava10%E9%9B%86%E6%88%90%E8%AF%91/</guid>
       <description>加强Docker容器与Java10集成(译) 原文链接
 很多运行在JAVA虚拟机(JVM)中的应用，包括数据服务如Apache Spark和Kafka以及传统企业应用，都运行在容器中。最近，运行在容器里的JVM出现了由于内存和CPU资源限制和使用率导致性能损失问题。这是因为JAVA意识不到自己运行在容器中。随着JAVA 10的发布，JVM终于可以通过设置cgroup来实现这些约束。内存和CPU约束都可以直接在容器里被用来管理JAVA应用，包括： * 在容器里面设置内存约束 * 在容器里设置可用的CPUs个数 * 在容器里设置CPU约束
 JAVA 10的这些优化在Docker for mac/windows和Docker企业版均可正常运行。
@@ -48,6 +48,28 @@ JAVA 10的这些优化在Docker for mac/windows和Docker企业版均可正常运
 JAVA对服务器进行分级定义，如果一台服务器有2CPUs和2GB内存，那么默认的堆栈大小是1/4的物理内存。假设一个安装了docker企业版的服务器有4CPUs和2GB内存。我们来比较分别比较运行JAVA 8和JAVA 10的容器的区别。先看JAVA 8：
 docker container run -it -m512 --entrypoint bash openjdk:latest $ docker-java-home/bin/java -XX:+PrintFlagsFinal -version | grep MaxHeapSize uintx MaxHeapSize := 524288000 {product} openjdk version &amp;quot;1.8.0_162&amp;quot;  我们可以看到最大的堆栈大小是512MB，刚好（1/4）X2GB，只是通过docker EE自动设置的，而不是通过设置容器来实现的。做个比较，我们看下在JAVA 10环境下运行同样的命令是什么结果。
 docker container run -it -m512M --entrypoint bash openjdk:10-jdk $ docker-java-home/bin/java -XX:+PrintFlagsFinal -version | grep MaxHeapSize size_t MaxHeapSize = 134217728 {product} {ergonomic} openjdk version &amp;quot;10&amp;quot; 2018-03-20  上面的结果显示，容器里的内存限制非常接近我们期望的128MB。</description>
+    </item>
+    
+    <item>
+      <title>活动</title>
+      <link>https://kelvinji2009.github.io/activity/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/activity/</guid>
+      <description> SerivceMesher 互动预告 此处将显示 ServiceMesher 最新活动信息。
+历史活动 此处将显示 ServiceMesher 历史活动信息。
+更多 更多信息
+ 本页面正在建设中。。。
+ </description>
+    </item>
+    
+    <item>
+      <title>联系我</title>
+      <link>https://kelvinji2009.github.io/contact/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/contact/</guid>
+      <description>GitHub https://github.com/kelvinji2009</description>
     </item>
     
   </channel>
