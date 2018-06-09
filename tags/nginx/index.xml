@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nginx on kelvinji2009</title>
+    <link>https://kelvinji2009.github.io/tags/nginx/</link>
+    <description>Recent content in Nginx on kelvinji2009</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Wed, 06 Jun 2018 16:00:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://kelvinji2009.github.io/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>为多个PHP-FPM容器量身打造单一Nginx镜像(译)</title>
+      <link>https://kelvinji2009.github.io/blog/%E4%B8%BA%E5%A4%9A%E4%B8%AAphp-fpm%E5%AE%B9%E5%99%A8%E9%87%8F%E8%BA%AB%E6%89%93%E9%80%A0%E5%8D%95%E4%B8%80nginx%E9%95%9C%E5%83%8F%E8%AF%91/</link>
+      <pubDate>Wed, 06 Jun 2018 16:00:00 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/%E4%B8%BA%E5%A4%9A%E4%B8%AAphp-fpm%E5%AE%B9%E5%99%A8%E9%87%8F%E8%BA%AB%E6%89%93%E9%80%A0%E5%8D%95%E4%B8%80nginx%E9%95%9C%E5%83%8F%E8%AF%91/</guid>
+      <description>为多个PHP-FPM容器量身打造单一Nginx镜像 译者的话：这篇博客主要讲述了如何创建一个可以关联docker环境变量与nginx配置文件的nginx镜像，供你所有的PHP-FPM容器应用。
+最近我一直在努力部署一套使用Docker容器的PHP微服务。其中一个问题是我们的PHP应用程序被设置为与PHP-FPM和Nginx一起工作（而不是这里所说的简单的Apache/PHP设置）,因此每个PHP微服务需要两个容器（也就是相当于两个Docker镜像）： * PHP-FPM容器 * Nginx容器
+假设一个应用运行超过六个PHP微服务，算上你的dev和prod环境，那么最终差不多会产生接近30个容器。我决定构建一个单独的Nginx Docker镜像，将PHP-FPM主机名作为环境变量映射到这个镜像里面独特的配置文件中，而不是为每个PHP-FPM微服务的镜像构建独特的Nginx镜像。
+在这篇博客文章中，我将概述我从上述方法1到方法2的过程，最后用介绍如何使用新定制Nginx Docker镜像的解决方案来结束这篇博客。
+我已经将这个镜像开源Github，所以如果这刚好是您经常遇到的问题，请随时查看。
+为什么是Nginx？ PHP-FPM和Nginx一起使用可以产生更好的PHP应用程序性能，但缺点是PHP-FPM Docker镜像默认没有像PHP Apache镜像那样与Nginx捆绑在一起。 如果您想将Nginx容器连接到PHP-FPM后端，则需要将该后端的DNS记录添加到您的Nginx配置中。
+例如，如果PHP-FPM容器作为名为php-fpm-api的容器运行，那么您的Nginx配置文件应该这样写：
+location ~ \.php$ { fastcgi_split_path_info ^(.+\.php)(/.+)$; # This line passes requests through to the PHP-FPM container fastcgi_pass php-fpm-api:9000; fastcgi_index index.php; include fastcgi_params; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; fastcgi_param PATH_INFO $fastcgi_path_info; }  如果你只服务一个PHP-FPM容器应用，在你的Nginx容器的配置文件中硬编码对应的名字是可以的。但是，如我上面提到的，每个PHP服务都需要一个对应的Nginx容器，我们就需要运行多个Nginx容器。创建一个新的Nginx镜像（我们后面必须维护和升级）将是一件痛苦的事情，因为即使管理一堆不同的卷，对于更改单个变量名称似乎也有很多工作要做。
+第一个解决方案：使用Docker文档里提到的方法envsubst 起初，我认为这很容易。在Docker文档中关于如何使用envsubst有一个很好的小章节，但不幸的是，这不适用于我的Nginx配置文件：
+vhost.conf
+server { listen 80; index index.php index.html; root /var/www/public; client_max_body_size 32M; location / { try_files $uri /index.php?$args; } location ~ \.</description>
+    </item>
+    
+  </channel>
+</rss>
