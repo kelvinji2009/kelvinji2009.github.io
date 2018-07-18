@@ -262,10 +262,13 @@
 
 <p>由于您的Kubernetes集群运行着容器化应用程序的多个副本，因此集中这些日志以便可以在一个位置查看它们变得非常重要。 此外，为了利用自动缩放（以及其他云原生功能）等优势，您的容器必须是不可变的。 所以你需要将你的日志存储在你的容器之外，这样它们将在整个运行期间保持不变。 OpenShift允许您部署EFK堆栈以聚合来自主机和应用程序的日志，无论它们来自多个容器，还是来自已经删除的容器。</p>
 
-<p>EFK堆栈由以下部分组成：
-* Elasticsearch（ES），一个存储所有日志的对象存储系统
-* Fluentd，从节点收集日志并将其提供给Elasticsearch
-* Kibana，Elasticsearch的Web用户界面</p>
+<p>EFK堆栈由以下部分组成：</p>
+
+<ul>
+<li>Elasticsearch（ES），一个存储所有日志的对象存储系统</li>
+<li>Fluentd，从节点收集日志并将其提供给Elasticsearch</li>
+<li>Kibana，Elasticsearch的Web用户界面</li>
+</ul>
 
 <h3 id="5-监控">5-监控</h3>
 
