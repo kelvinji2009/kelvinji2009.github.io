@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://kelvinji2009.github.io/blog/why-kubernetes-is-the-new-application-server/</loc>
+    <lastmod>2018-07-18T21:53:43+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://kelvinji2009.github.io/blog/%E4%B8%BA%E5%A4%9A%E4%B8%AAphp-fpm%E5%AE%B9%E5%99%A8%E9%87%8F%E8%BA%AB%E6%89%93%E9%80%A0%E5%8D%95%E4%B8%80nginx%E9%95%9C%E5%83%8F%E8%AF%91/</loc>
     <lastmod>2018-06-06T16:00:00+08:00</lastmod>
   </url>
@@ -19,7 +24,7 @@
   
   <url>
     <loc>https://kelvinji2009.github.io/blog/</loc>
-    <lastmod>2018-06-06T16:00:00+08:00</lastmod>
+    <lastmod>2018-07-18T21:53:43+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -41,8 +46,32 @@
   </url>
   
   <url>
+    <loc>https://kelvinji2009.github.io/tags/istio/</loc>
+    <lastmod>2018-07-18T21:53:43+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kelvinji2009.github.io/tags/java/</loc>
+    <lastmod>2018-07-18T21:53:43+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://kelvinji2009.github.io/tags/java10/</loc>
     <lastmod>2018-05-27T20:00:38+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kelvinji2009.github.io/tags/kubernetes/</loc>
+    <lastmod>2018-07-18T21:53:43+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kelvinji2009.github.io/categories/kubernetes/</loc>
+    <lastmod>2018-07-18T21:53:43+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -66,7 +95,7 @@
   
   <url>
     <loc>https://kelvinji2009.github.io/</loc>
-    <lastmod>2018-06-06T16:00:00+08:00</lastmod>
+    <lastmod>2018-07-18T21:53:43+08:00</lastmod>
     <priority>0</priority>
   </url>
   
