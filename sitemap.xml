@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://kelvinji2009.github.io/blog/7-best-practices-for-building-containers/</loc>
+    <lastmod>2018-07-23T14:21:17+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://kelvinji2009.github.io/blog/why-kubernetes-is-the-new-application-server/</loc>
     <lastmod>2018-07-18T21:53:43+08:00</lastmod>
   </url>
@@ -24,7 +29,7 @@
   
   <url>
     <loc>https://kelvinji2009.github.io/blog/</loc>
-    <lastmod>2018-07-18T21:53:43+08:00</lastmod>
+    <lastmod>2018-07-23T14:21:17+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -35,13 +40,13 @@
   
   <url>
     <loc>https://kelvinji2009.github.io/tags/docker/</loc>
-    <lastmod>2018-06-06T16:00:00+08:00</lastmod>
+    <lastmod>2018-07-23T14:21:17+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://kelvinji2009.github.io/categories/docker/</loc>
-    <lastmod>2018-06-06T16:00:00+08:00</lastmod>
+    <lastmod>2018-07-23T14:21:17+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -89,13 +94,13 @@
   
   <url>
     <loc>https://kelvinji2009.github.io/tags/</loc>
-    <lastmod>2018-06-06T16:00:00+08:00</lastmod>
+    <lastmod>2018-07-23T14:21:17+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://kelvinji2009.github.io/</loc>
-    <lastmod>2018-07-18T21:53:43+08:00</lastmod>
+    <lastmod>2018-07-23T14:21:17+08:00</lastmod>
     <priority>0</priority>
   </url>
   
