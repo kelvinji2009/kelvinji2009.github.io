@@ -6,7 +6,7 @@
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Istio · Stay focused and keep hacking.</title>
+  <title>Kubernetes最佳实践：第一季概览 · Stay focused and keep hacking.</title>
   <meta name="author" content="" />
 
   
@@ -59,9 +59,9 @@
   <link rel="stylesheet" href="https://kelvinji2009.github.io/css/prism.css" />
 
   
-  <meta property="og:title" content="Istio" />
+  <meta property="og:title" content="Kubernetes最佳实践：第一季概览" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="/tags/istio//" />
+  <meta property="og:url" content="/blog/k8s-best-practice-s01//" />
   <meta property="og:image" content="img/logo.png" />
 
   
@@ -90,9 +90,9 @@
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand home" href="https://kelvinji2009.github.io/">
-                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="Istio logo" class="hidden-xs hidden-sm">
-                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="Istio logo" class="visible-xs visible-sm">
-                    <span class="sr-only">Istio - 跳到主页</span>
+                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="Kubernetes最佳实践：第一季概览 logo" class="hidden-xs hidden-sm">
+                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="Kubernetes最佳实践：第一季概览 logo" class="visible-xs visible-sm">
+                    <span class="sr-only">Kubernetes最佳实践：第一季概览 - 跳到主页</span>
                 </a>
                 <div class="navbar-buttons">
                     <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
@@ -159,7 +159,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>Istio</h1>
+                <h1>Kubernetes最佳实践：第一季概览</h1>
             </div>
         </div>
     </div>
@@ -168,61 +168,143 @@
 
         <div id="content">
             <div class="container">
+
                 <div class="row">
+
                     
 
-                    <div class="col-md-9" id="blog-listing-medium">
+                    <div class="col-md-9" id="blog-post">
 
+                        <p class="text-muted text-uppercase mb-small text-left">
+                        作者 <a href="https://kelvinji2009.github.io">kelvinji2009</a>
+                        
+                        |
                         
                         
-                        <section class="post">
-                            <div class="row">
-                                <div class="col-md-4">
-                                  <div class="image">
-                                      <a href="https://kelvinji2009.github.io/blog/why-kubernetes-is-the-new-application-server/">
-                                          
-                                          <img src="https://developers.redhat.com/blog/wp-content/uploads/2018/05/Screenshot-2018-05-18-21.20.31.png" class="img-responsive" alt="">
-                                          
-                                      </a>
-                                  </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <h2><a href="https://kelvinji2009.github.io/blog/why-kubernetes-is-the-new-application-server/">为何说kubernetes是新一代的应用服务器(译)</a></h2>
-                                    <div class="clearfix">
-                                        <p class="author-category">
-                                          
-                                          作者 <a href="https://kelvinji2009.github.io">kelvinji2009</a>
-                                          
-                                          
-                                          
-                                          归档于<a href="https://kelvinji2009.github.io/categories/kubernetes">kubernetes</a>
-                                          
-                                          
+                        
+                        归档于<a href="https://kelvinji2009.github.io/categories/kubernetes">kubernetes</a>
+                        
+                        |
+                        
+                        发表于
+                        2018-08-10
+                        |
+                        
+                        
+                        
+                        <a href="https://kelvinji2009.github.io/tags/kubernetes/">#kubernetes</a>&nbsp;
+                        
+                        
+                        
+                        </p>
+                        <div id="post-content">
+                          
 
-                                        </p>
-                                        <p class="date-comments">
-                                            <a href="https://kelvinji2009.github.io/blog/why-kubernetes-is-the-new-application-server/"><i class="fa fa-calendar-o"></i> 2018-07-18</a>
-                                        </p>
-                                    </div>
-                                    
-                                    <p class="intro">你有没有想过为什么你要使用容器部署你的多平台应用程序？这只是“跟随炒作”的问题吗？在本文中，我将要问一些挑衅性的问题，以说明为什么Kubernetes是新一代的应用服务器。</p>
-                                    
-                                    <p class="read-more"><a href="https://kelvinji2009.github.io/blog/why-kubernetes-is-the-new-application-server/" class="btn btn-template-main">继续阅读</a>
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
+<h1 id="kubernetes最佳实践-第一季概览">Kubernetes最佳实践：第一季概览</h1>
+
+<ul>
+<li>作者：Sandeep Dinesh,Google Developer Advocate</li>
+</ul>
+
+<p><a href="https://medium.com/google-cloud/kubernetes-best-practices-season-one-11119aee1d10">原文</a></p>
+
+<p>Kubernetes很复杂，而且每天都变得越来越复杂。如果你是刚开始使用Kubernetes，或者已经在生产环境中运行了一段时间，那么很难跟上正在进行的快速开发步伐。当你有一个团队的人构建在kubernetes的时候，那么想要跟上其快速开发的步伐则显得更加艰难了，因为你必须保证团队里的每个人都保持更新且能同步到生产环境。</p>
+
+<p>虽然市面上有大量的<code>hello world</code>经验的内容，但是使用kubernetes更多涉及到的是如何运行一个<code>Deployment</code>并通过<code>Service</code>把它暴露给外部世界。Kubernetes本身是白纸一张，基本上可以画任何你想画的东西上去，但是想知道从哪开始画却真的相当困难。</p>
+
+<p>考虑到这一点，我开始根据我在日常与人交谈时收到的问题和反馈，开展题为“Kubernetes最佳实践”（以下是幻灯片和视频）的演讲。这个演讲非常受欢迎，我决定深入研究各个主题。我最初为这次演讲制作了七集内容（我想七集是非常合适的数量），我真的认为这些文章和视频可以帮助你和你的团队迅速提升Kubernetes。</p>
+
+<p>所以这里是全部七集期待给你带来观赏乐趣的视频！ 我现在正在制作下一批视频，并希望得到您对想要观看的内容的反馈。欢迎发表评论或在推特上给我发消息，提出您的建议！</p>
+
+<h2 id="第一季">第一季</h2>
+
+<ul>
+<li><a href="https://www.youtube.com/playlist?list=PLIivdWyY5sqL3xfXz5xJvwzFW_tlQB_GB">第一季全部视频</a></li>
+</ul>
+
+<h3 id="s01e01-如何以及为什么要构建尽量小的容器">S01E01-如何以及为什么要构建尽量小的容器</h3>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/0*K0GIlb657-3AF8XC.jpg" alt="0*K0GIlb657-3AF8XC.jpg" /></p>
+
+<p>在使用Kubernetes之前，你必须构建一些容器。Docker使得构建容器变得非常容易，但这也意味着很容易构建低效且不安全的容器。构建较小的容器可以很容易地提高Kubernetes集群的使用效率，而且这是一种不费力的方式。</p>
+
+<ul>
+<li><a href="https://cloudplatform.googleblog.com/2018/04/Kubernetes-best-practices-how-and-why-to-build-small-container-images.html">博客</a></li>
+<li><a href="https://youtu.be/wGz_cbtCiEA">视频</a></li>
+</ul>
+
+<h3 id="s01e02-使用-namespace-来组织你的资源">S01E02-使用<code>namespace</code>来组织你的资源</h3>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/0*oE_d_44cAUSJ_wmg.jpg" alt="0*oE_d_44cAUSJ_wmg.jpg" /></p>
+
+<p>一旦过了学习<code>Hello world</code>的阶段，在开始尝试管理在Kubernetes上运行的微服务时，您可能会遇到如何组织它们的问题。随着您的团队的成长并且您需要更多的可见性和控制权时，这会变得更糟。命名空间(namespace)提供了一种管理Kubernetes资源的强大方法，并为k8s的策略和管理提供了基础。</p>
+
+<ul>
+<li><a href="https://cloudplatform.googleblog.com/2018/04/Kubernetes-best-practices-Organizing-with-Namespaces.html">博客</a></li>
+<li><a href="https://youtu.be/xpnZX3if9Tc">视频</a></li>
+</ul>
+
+<h3 id="s01e03-使用-readiness-和-liveness-探针来做健康检查">S01E03-使用<code>readiness</code>和<code>liveness</code>探针来做健康检查</h3>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/0*rtpkUtv66zDCEUUX.jpg" alt="0*rtpkUtv66zDCEUUX.jpg" /></p>
+
+<p>要创建强大可靠的服务需要支持健康检查。虽然Kubernetes具有默认的内置运行状况检查，但它们对于许多应用程序来说可能还不够。 <code>readiness</code>和<code>liveness</code>探针使您能够轻松地为您的应用程序自定义这些运行状况检查。</p>
+
+<ul>
+<li><a href="https://cloudplatform.googleblog.com/2018/05/Kubernetes-best-practices-Setting-up-health-checks-with-readiness-and-liveness-probes.html">博客</a></li>
+<li><a href="https://youtu.be/mxEvAPQRwhw">视频</a></li>
+</ul>
+
+<h3 id="s01e04-资源请求和限制">S01E04-资源请求和限制</h3>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/0*tiEgL6ffA_sqY7Ub.jpg" alt="0*tiEgL6ffA_sqY7Ub.jpg" /></p>
+
+<p>内存泄漏，死循环，未知捣乱分子，过度配置，OMG，这种种问题！虽然Kubernetes为您提供了一个运行服务的强大平台，但如果您没有围绕资源定义规则，那么您最终将陷入困境。 但是值得庆幸的是，Kubernetes为您提供了大量的对资源及其使用方式的控制接口。</p>
+
+<ul>
+<li><a href="https://cloudplatform.googleblog.com/2018/05/Kubernetes-best-practices-Resource-requests-and-limits.html">博客</a></li>
+<li><a href="https://youtu.be/xjpHggHKm78">视频</a></li>
+</ul>
+
+<h3 id="s01e05-优雅终止">S01E05-优雅终止</h3>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/0*CkNz3GlnZGhyycfY.jpg" alt="0*CkNz3GlnZGhyycfY.jpg" /></p>
+
+<p>Kubernetes中的Pod和Containers需要优雅地处理终止。 Kubernetes可以出于各种原因决定终止一个完全健康的Pod，并且干净地关闭是为您的用户提供良好体验的关键。</p>
+
+<ul>
+<li><a href="https://cloudplatform.googleblog.com/2018/05/Kubernetes-best-practices-terminating-with-grace.html">博客</a></li>
+<li><a href="https://youtu.be/Z_l_kE1MDTc">视频</a></li>
+</ul>
+
+<h3 id="s01e06-映射外部服务">S01E06-映射外部服务</h3>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/0*BXOE0v4yChNM2i9s.jpg" alt="0*BXOE0v4yChNM2i9s.jpg" /></p>
+
+<p>有可能您的服务存在于Kubernetes集群之外。其中一些可能是第三方服务，其他可能是您的团队或公司运行的服务。无论如何，生活在混合世界中会带来复杂性。Kubernetes能够映射这些外部服务，使其感觉就像是Kubernetes本地服务一样，从而更容易消除与外部服务一起工作的距离。</p>
+
+<ul>
+<li><a href="https://cloudplatform.googleblog.com/2018/05/Kubernetes-best-practices-mapping-external-services.html">博客</a></li>
+<li><a href="https://youtu.be/fvpq4jqtuZ8">视频</a></li>
+</ul>
+
+<h3 id="s01e07-零停机升级集群">S01E07-零停机升级集群</h3>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/0*UdMc07JcvGnbtudO.jpg" alt="0*UdMc07JcvGnbtudO.jpg" /></p>
+
+<p>您需要做的最重要的事情之一是让您的群集保持最新状态。使用像GKE这样的托管服务可以使这更容易，但是你也可以使用一些其他方法使升级过程更加顺畅。</p>
+
+<ul>
+<li><a href="https://cloudplatform.googleblog.com/2018/06/Kubernetes-best-practices-upgrading-your-clusters-with-zero-downtime.html">博客</a></li>
+<li><a href="https://youtu.be/ajbC1yTW2x0">视频</a></li>
+</ul>
+
+<p>从内容审阅到视频和博客编辑团队，感谢所有使这一切成为可能的人，使这个系列成为现实！</p>
+
+                        </div>
+                        
                         
 
-                        <ul class="pager">
-                            
-                            <li class="previous disabled"><a href="#">&larr; 更新</a></li>
-                            
-
-                            
-                            <li class="next disabled"><a href="#">更旧 &rarr;</a></li>
-                            
-                        </ul>
                     </div>
                     
 
@@ -334,6 +416,7 @@
 
                 </div>
                 
+
             </div>
             
         </div>
