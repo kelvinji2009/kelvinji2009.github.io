@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像 · Stay focused and keep hacking.</title>
+  <meta name="author" content="" />
+
+  
+  <meta name="keywords" content="service mesh">	
+  
+
+  
+  <meta name="description" content="Stay focused and keep hacking.">	
+  
+
+  <meta name="generator" content="Hugo 0.44" />
+
+  <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  
+  <link href="https://kelvinji2009.github.io/css/animate.css" rel="stylesheet">
+
+  
+  
+    <link href="https://kelvinji2009.github.io/css/style.violet.css" rel="stylesheet" id="theme-stylesheet">
+  
+
+
+  
+  <link href="https://kelvinji2009.github.io/css/custom.css" rel="stylesheet">
+
+  
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+  <link rel="shortcut icon" href="https://kelvinji2009.github.io/img/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="https://kelvinji2009.github.io/img/apple-touch-icon.png" />
+  
+
+  <link href="https://kelvinji2009.github.io/css/owl.carousel.css" rel="stylesheet">
+  <link href="https://kelvinji2009.github.io/css/owl.theme.css" rel="stylesheet">
+
+  <link rel="alternate" href="https://kelvinji2009.github.io/index.xml" type="application/rss+xml" title="kelvinji2009">
+
+  
+  <link rel="stylesheet" href="https://kelvinji2009.github.io/css/prism.css" />
+
+  
+  <meta property="og:title" content="Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/blog/k8s-best-practice-s01e01//" />
+  <meta property="og:image" content="img/logo.png" />
+
+  
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+</head>
+
+
+  <body>
+
+    <div id="all">
+
+        <header>
+
+          <div class="navbar-affixed-top" data-spy="affix" data-offset-top="200">
+
+    <div class="navbar navbar-default yamm" role="navigation" id="navbar">
+
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand home" href="https://kelvinji2009.github.io/">
+                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像 logo" class="hidden-xs hidden-sm">
+                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像 logo" class="visible-xs visible-sm">
+                    <span class="sr-only">Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像 - 跳到主页</span>
+                </a>
+                <div class="navbar-buttons">
+                    <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
+                      <span class="sr-only">切换导航</span>
+                        <i class="fa fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            
+
+            <div class="navbar-collapse collapse" id="navigation">
+                <ul class="nav navbar-nav navbar-right">
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/">主页</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/blog/">博客</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/contact/">联系我</a>
+                    
+                  </li>
+                  
+                </ul>
+            </div>
+            
+
+            <div class="collapse clearfix" id="search">
+
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                        <span class="input-group-btn">
+
+                    <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
+
+                </span>
+                    </div>
+                </form>
+
+            </div>
+            
+
+        </div>
+    </div>
+    
+
+</div>
+
+
+
+
+        </header>
+
+        <div id="heading-breadcrumbs">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div id="content">
+            <div class="container">
+
+                <div class="row">
+
+                    
+
+                    <div class="col-md-9" id="blog-post">
+
+                        <p class="text-muted text-uppercase mb-small text-left">
+                        作者 <a href="https://kelvinji2009.github.io">kelvinji2009</a>
+                        
+                        |
+                        
+                        
+                        
+                        归档于<a href="https://kelvinji2009.github.io/categories/kubernetes">kubernetes</a>
+                        
+                        |
+                        
+                        发表于
+                        2018-08-10
+                        |
+                        
+                        
+                        
+                        <a href="https://kelvinji2009.github.io/tags/kubernetes/">#kubernetes</a>&nbsp;
+                        
+                        
+                        
+                        </p>
+                        <div id="post-content">
+                          
+
+<h1 id="kubernetes最佳实践s01e01-如何以及为什么构建尽量小的容器镜像">Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像</h1>
+
+<ul>
+<li>作者：Sandeep Dinesh,Google Developer Advocate</li>
+<li>日期：2018/04/20</li>
+</ul>
+
+<p><a href="https://cloudplatform.googleblog.com/2018/04/Kubernetes-best-practices-how-and-why-to-build-small-container-images.html">原文</a></p>
+
+<p><strong>编者按</strong>：今天是Google Developer Advocate <code>Sandeep Dinesh</code> 关于如何充分利用Kubernetes环境的七部分视频和博客系列的第一部分。 今天，他主要讲保持容器镜像尽可能小的理论和实用性。</p>
+
+<p>Docker使构建容器镜像变得轻而易举。只需将标准 <code>Dockerfile</code> 放入您的文件夹，运行 <code>docker build</code> 命令，然后运行，芝麻开门！您的容器镜像已构建成功！</p>
+
+<p>这种简单性的缺点是，很容易构建出大体积的容器镜像，其中包含您不需要的东西 - 包括潜在的安全漏洞。</p>
+
+<p>在本期“Kubernetes最佳实践”中，让我们探讨如何使用<code>Alpine Linux</code> 和 <code>Docker builder</code> 模式创建生产就绪的容器镜像，然后做一些基准测试，然后确定这些容器在Kubernetes集群中运行方式。</p>
+
+<p>根据您使用的是解释型语言还是编译型语言，创建容器镜像的过程会有所不同。让我们一起来深入了解！</p>
+
+<h2 id="解释型语言的容器化">解释型语言的容器化</h2>
+
+<p>解释型语言，如Ruby，Python，Node.js，PHP和其他语言通过发送源代码到解释器来运行代码。 这样的好处是可以跳过编译步骤，但其缺点是要求您将解释器与代码一起丢进去。</p>
+
+<p>幸运的是，大多数这些语言都提供了预构建的Docker容器，其中包含一个轻量级环境，允许您运行更小的容器。</p>
+
+<p>我们来看一个Node.js应用程序并对其进行容器化。 首先，让我们使用<code>node：onbuild</code>镜像作为基础。 Docker容器的<code>onbuild</code>版本预先打包了您需要的所有内容，因此无需执行大量配置即可搞定。 这意味着Dockerfile非常简单（只有两行！）。 但是你要付出的磁盘大小代价 - 差不多700MB！</p>
+
+<pre><code class="language-dockerfile">FROM node:onbuild
+EXPOSE 8080
+</code></pre>
+
+<p><img src="https://4.bp.blogspot.com/-lweIsqWsBTU/WtjgagyqFBI/AAAAAAAAFcU/eSZU-2Ig1eIgJrZIeqhloRQe-Fr3Xcx0gCLcBGAs/s1600/1.png" alt="1.png" /></p>
+
+<p>通过使用较小的基础镜像（如Alpine），您可以显著减少容器的大小。<code>Alpine Linux</code>是一款体积小，轻量级的Linux发行版，在Docker用户中非常受欢迎，因为它与许多应用程序兼容，同时仍然保持小体积。</p>
+
+<p>幸运的是，Node.js（以及其他流行语言）有一个官方的<code>Alpine</code>图像，可以满足您的一切需求。与默认的<code>node</code>镜像不同，<code>node：alpine</code>会删除许多文件和程序，只留下足以运行您的应用程序的部分。</p>
+
+<p>基于<code>Alpine Linux</code>的Dockerfile创建起来有点复杂，因为你必须运行一些针对<code>onbuild</code>的命令。</p>
+
+<pre><code class="language-dockerfile">FROM node:alpine
+WORKDIR /app
+COPY package.json /app/package.json
+RUN npm install --production
+COPY server.js /app/server.js
+EXPOSE 8080
+CMD npm start
+</code></pre>
+
+<p>但是，这是值得的，因为产生的镜像只有65MB！</p>
+
+<p><img src="https://2.bp.blogspot.com/-Q2qeIhryIS4/WtjgU5OfUhI/AAAAAAAAFcQ/p9UWnKbCmnIeH1DCMyIjY_FSqiuJWNaFwCLcBGAs/s1600/2.png" alt="2.png" /></p>
+
+<h2 id="编译型语言的容器化">编译型语言的容器化</h2>
+
+<p>诸如Go，C，C ++，Rust，Haskell等编译型语言可以创建在没有许多外部依赖性的情况下运行的二进制文件。 这意味着你可以提前构建二进制文件并将其投入生产，而无需把创建二进制文件（如编译器）放进去。</p>
+
+<p>借助Docker对<a href="https://docs.docker.com/engine/userguide/eng-image/multistage-build/">多阶段构建</a>的支持，您可以轻松地打包二进制文件和最少量的脚手架。 让我们学习一下怎么做。</p>
+
+<p>让我们采用Go应用程序并使用此模式对其进行容器化。 首先，让我们使用<code>golang：onbuild</code>镜像作为基础。 和以前一样，Dockerfile只有两行，但你再次付出磁盘大小超过700MB的代价！</p>
+
+<pre><code class="language-dockerfile">FROM golang:onbuild
+EXPOSE 8080
+</code></pre>
+
+<p><img src="https://3.bp.blogspot.com/-fWp3NTbrQz8/WtjgPgn-DEI/AAAAAAAAFcI/Xfi8akc9Tro9n70Qf3fPOBPHKITcYZgnACLcBGAs/s1600/3.png" alt="3.png" /></p>
+
+<p>下一步是使用更小的基础镜像，也就是<code>golang：alpine</code>镜像。 到目前为止，这与我们针对解释型语言所遵循的过程相同。</p>
+
+<p>同样，使用Alpine基础镜像创建Dockerfile有点复杂，因为您必须运行一些执行<code>onbuild</code>镜像相关的命令。</p>
+
+<pre><code class="language-dockerfile">FROM golang:alpine
+WORKDIR /app
+ADD . /app
+RUN cd /app &amp;&amp; go build -o goapp
+EXPOSE 8080
+ENTRYPOINT ./goapp
+</code></pre>
+
+<p>但同样，由此产生的镜像要小得多，大小只有256MB！</p>
+
+<p><img src="https://3.bp.blogspot.com/-mYXJQ8dfpRE/WtjgIHkjxDI/AAAAAAAAFcE/yUfnPtACXkI2slVHIZGVWdx2gK5CJ6LqgCLcBGAs/s1600/4.png" alt="4.png" /></p>
+
+<p>但是，我们可以使镜像更小：您不需要Go附带的任何编译器或其他构建和调试工具，因此您可以从最终容器中删除它们。</p>
+
+<p>让我们使用多阶段构建来获取由<code>golang：alpine</code>容器创建的二进制文件并将其自行打包。</p>
+
+<pre><code class="language-dockerfile">FROM golang:alpine AS build-env
+WORKDIR /app
+ADD . /app
+RUN cd /app &amp;&amp; go build -o goapp
+
+FROM alpine
+RUN apk update &amp;&amp; \
+   apk add ca-certificates &amp;&amp; \
+   update-ca-certificates &amp;&amp; \
+   rm -rf /var/cache/apk/*
+WORKDIR /app
+COPY --from=build-env /app/goapp /app
+EXPOSE 8080
+ENTRYPOINT ./goapp
+</code></pre>
+
+<p>你看看现在！ 这个容器镜像只有12MB大小！</p>
+
+<p><img src="https://3.bp.blogspot.com/-QHfJW-5WNAU/Wtjf_DFyITI/AAAAAAAAFcA/fx9DsdmrzPMn3wB2Jdy9ZThZmaTCX-fOwCLcBGAs/s1600/5.png" alt="5.png" /></p>
+
+<p>在构建此容器时，您可能会注意到Dockerfile会执行一些奇怪的操作，例如手动将HTTPS证书安装到容器中。这是因为基础的<code>Alpine Linux</code>几乎没有预安装任何东西。 因此，即使您需要手动安装任何依赖项，最终结果也还是超小容器镜像！</p>
+
+<p>注意：如果您想节省更多空间，可以静态编译应用程序并使用<code>scratch</code>容器镜像。使用<code>scratch</code>作为基础容器镜像意味着您从头开始，根本没有基础层。 但是，我建议使用<code>Alpine</code>作为基础镜像而不是<code>scratch</code>，因为<code>Alpine</code>镜像中的仅仅增加少量额外MB的大小却可以使得使用标准工具和安装依赖项变得更加容易。</p>
+
+<h2 id="在哪构建和存储您的容器镜像">在哪构建和存储您的容器镜像？</h2>
+
+<p>为了构建和存储镜像，我强烈推荐<code>Google Container Builder</code>和<code>Google Container Registry</code>的组合。 <code>Google Container Builder</code>非常快，并自动将镜像推送到<code>Google Container Registry</code>。 大多数开发人员应该可以轻松地在GCP的免费套餐中完成所有工作，而<code>Google Container Registry</code>与原始Google云端存储的价格相同（便宜！）。</p>
+
+<p><code>Google Kubernetes Engine</code>等平台可以安全地从<code>Google Container Registry</code>中拉取镜像而无需任何其他配置，让您轻松上手！</p>
+
+<p>此外，<code>Google Container Registry</code>还为您提供漏洞扫描工具和开箱即用的IAM支持。 这些工具可以使您更轻松地保护和锁定容器。</p>
+
+<h2 id="评估小体积容器的性能">评估小体积容器的性能</h2>
+
+<p>人们声称小体积容器的巨大优势是缩短了时间 - 建立时间和拉取时间。 让我们测试一下，使用<code>onbuild</code>创建的容器，对比在多阶段过程中使用<code>Alpine</code>创建的容器，看看真实情况如何。</p>
+
+<p><em>TL;DR：对于功能强大的计算机或<code>Container Builder</code>没有显著差异，但对于性能没有那么强大的计算机和共享系统（如许多CI/CD系统）而言则有明显差异。 就绝对性能而言，小镜像总是更好。</em></p>
+
+<h3 id="在大型机器上构建镜像">在大型机器上构建镜像</h3>
+
+<p>对于第一次测试，我将使用笔记本电脑进行构建。 我正在使用我们的办公室WiFi，所以下载速度非常快！</p>
+
+<p><img src="https://4.bp.blogspot.com/-54jSQn0OHec/Wtjgrp7-rOI/AAAAAAAAFcg/m9wL0-BPhDY8VUoVJS0uIRFtybYQQrxkwCLcBGAs/s1600/6.png" alt="6.png" /></p>
+
+<p>对于每次构建，我都会删除缓存中的所有Docker镜像。</p>
+
+<h5 id="构建-build">构建(Build)：</h5>
+
+<pre><code>Go Onbuild: 35 Seconds
+Go Multistage: 23 Seconds
+</code></pre>
+
+<p>对于较大的容器镜像，构建需要的时间大约耗费多10秒左右。 虽然这个代价仅在初始构建时需要付出，但是如果您使用持续集成系统，则在每次构建时都要付出这个代价。</p>
+
+<p>下一个测试是将容器镜像推送到远程镜像仓库。 对于此测试，我使用<code>Google Container Registry</code>来存储镜像。</p>
+
+<h5 id="推送-push">推送(Push)：</h5>
+
+<pre><code>Go Onbuild: 15 Seconds
+Go Multistage: 14 Seconds
+</code></pre>
+
+<p>这很有趣！ 为什么需要花费相同的时间来推送12MB镜像和700MB镜像？ 事实证明，<code>Google Container Registry</code>在幕后使用了很多技巧，包括许多流行基础镜像的全局缓存。</p>
+
+<p>最后，我想测试将镜像从远程镜像仓库库拉到本地计算机所需的时间。</p>
+
+<h5 id="拉取-pull">拉取(Pull)：</h5>
+
+<pre><code>Go Onbuild: 26 Seconds
+Go Multistage: 6 Seconds
+</code></pre>
+
+<p>20秒的差距，这是使用两个不同容器镜像之间的最大差异。 您可以开始看到使用较小镜像的优势，尤其是在经常拉取镜像时。</p>
+
+<p>您还可以使用<code>Google Container Builder</code>在云中构建容器镜像，这样可以自动将它们存储在<code>Google Container Registry</code>中。</p>
+
+<h5 id="构建-build-推送-push">构建(build)+推送(Push)</h5>
+
+<pre><code>Go Onbuild: 25 Seconds
+Go Multistage: 20 Seconds
+</code></pre>
+
+<p>再次证明，使用较小的镜像有一点小优势，没有我想象的那么大。</p>
+
+<h3 id="在小型机器上构建镜像">在小型机器上构建镜像</h3>
+
+<p>如果实在小型机器上构建镜像，那么使用较小的容器镜像是否有优势呢？ 如果你有一个功能强大的笔记本电脑与快速互联网连接和/或容器生成器，优势并不明显。 但是，如果您使用功能较弱的机器，故事就会发生变化。 为了模拟这一点，我使用了一个<code>Google Compute Engine f1-micro VM</code>来构建，推送和拉取这些镜像，结果非常惊人！</p>
+
+<h5 id="构建-build-1">构建(build)</h5>
+
+<pre><code>Go Onbuild: 52 seconds
+Go Multistage: 6 seconds
+</code></pre>
+
+<h5 id="推送-push-1">推送(Push)</h5>
+
+<pre><code>Go Onbuild: 54 seconds
+Go Multistage: 28 seconds
+</code></pre>
+
+<h5 id="拉取-pull-1">拉取(Pull)</h5>
+
+<pre><code>Go Onbuild: 48 Seconds
+Go Multistage: 16 seconds
+</code></pre>
+
+<p>在这种情况下，使用较小的容器镜像确实非常有帮助！</p>
+
+<h3 id="在kubernetes上拉取镜像">在kubernetes上拉取镜像</h3>
+
+<p>虽然您可能不关心构建和推送容器镜像所需的时间，但您应该非常关心拉取容器镜像所需的时间。 对于Kubernetes，这可能是您的生产集群最重要的指标。</p>
+
+<p>例如，假设您有一个三节点集群，其中一个节点崩溃。 如果您使用的是像<code>Kubernetes Engine</code>这样的托管系统，系统会自动生成一个新节点来代替它。</p>
+
+<p>但是，这个新节点将是全新的，并且必须先拉取所有容器镜像才能开始工作。 拉取容器镜像所需的时间越长，集群执行的时间就越长！</p>
+
+<p>当您增加群集大小（例如，使用<code>Kubernetes Engine Autoscaling</code>）或将节点升级到新版本的Kubernetes时，可能会发生这种情况（接下来的几集中会关注这个问题）。</p>
+
+<p>我们可以看到来自多个部署的多个容器的拉取性能可以在这里真正体现出来，使用小容器可能会浪费几分钟的部署时间！</p>
+
+<h2 id="安全性和漏洞">安全性和漏洞</h2>
+
+<p>除了性能之外，使用较小的容器镜像还有很大的安全性提升。 与使用大基础镜像的容器镜像相比，小容器镜像通常具有较小的攻击面。</p>
+
+<p>几个月前，我构建了<code>Go onbuild</code>和<code>multi-age</code>容器镜像，因此它们可能包含一些已被发现的漏洞。 使用<code>Google Container Registry</code>的内置漏洞扫描，可以轻松扫描容器中的已知漏洞。 让我们看看我们能找到些什么。</p>
+
+<p><img src="https://1.bp.blogspot.com/-ov_9B_1zYLM/Wtje40i-0mI/AAAAAAAAFbo/RKqR6C-W8PUFeaxKmOuIstM7uzHI3IVGgCLcBGAs/s1600/7.png" alt="7.png" /></p>
+
+<p>哇，这次两者之间有很大的不同！ 较小容器镜像中只有三个“中级”漏洞，而较大容器镜像中有16个严重漏洞和300多个其他漏洞。</p>
+
+<p>让我们深入了解更大容器镜像里面存在的问题。</p>
+
+<p><img src="https://1.bp.blogspot.com/-dZYGFWxicJs/WtjevtiBveI/AAAAAAAAFbk/wIxkM9w-kqYsof9apykSgKXn0-VojoEYwCLcBGAs/s1600/8.png" alt="8.png" /></p>
+
+<p>您可以看到大多数存在问题的与我们的应用程序无关，甚至没有我们的应用程序！ 因为多阶段构建使用的是更小的基础镜像，所以可以产生漏洞的东西更少。</p>
+
+<h2 id="结论">结论</h2>
+
+<p>使用小容器镜像的性能和安全优势不言而喻。使用小的基础镜像和<code>builder pattern</code>可以更容易地构建小镜像，并且还有许多其他技术可用于单个技术栈和编程语言，以最小化容器体积。 无论你做什么，你都可以确信你保持容器镜像最小化的努力是值得的！</p>
+
+<p>[未完待续]第一季第二集中我们将讨论如何使用Kubernetes命名空间来隔离集群。</p>
+
+                        </div>
+                        
+                        
+
+                    </div>
+                    
+
+                    
+
+                    
+
+                    <div class="col-md-3">
+
+                        
+
+                        
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">搜索</h3>
+    </div>
+
+    <div class="panel-body">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" role="search">
+            <div class="input-group">
+                <input type="search" name="q" class="form-control" placeholder="搜索">
+                <input type="hidden" name="sitesearch" value="https://kelvinji2009.github.io/">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">分类</h3>
+    </div>
+
+    <div class="panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            
+            <li><a href="https://kelvinji2009.github.io/categories/docker">docker (4)</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/categories/kubernetes">kubernetes (4)</a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="panel sidebar-menu">
+    <div class="panel-heading">
+      <h3 class="panel-title">标签</h3>
+    </div>
+
+    <div class="panel-body">
+        <ul class="tag-cloud">
+            
+            <li><a href="https://kelvinji2009.github.io/tags/docker"><i class="fa fa-tags"></i> docker</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/istio"><i class="fa fa-tags"></i> istio</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/java"><i class="fa fa-tags"></i> java</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/java10"><i class="fa fa-tags"></i> java10</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/kubernetes"><i class="fa fa-tags"></i> kubernetes</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/nginx"><i class="fa fa-tags"></i> nginx</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/php"><i class="fa fa-tags"></i> php</a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+                        
+
+                    </div>
+                    
+
+                    
+
+                </div>
+                
+
+            </div>
+            
+        </div>
+        
+
+        <footer id="footer">
+    <div class="container">
+
+        
+        <div class="col-md-4 col-sm-6">
+            <h4>关于我们</h4>
+
+            kelvinji2009
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+        <div class="col-md-4 col-sm-6">
+
+             
+            <h4>最新博客</h4>
+
+            <div class="blog-entries">
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/k8s-best-practice-s01e01/">
+                          
+                          <img src="https://cdn-images-1.medium.com/max/1600/0*K0GIlb657-3AF8XC.jpg" class="img-responsive" alt="Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/k8s-best-practice-s01e01/">Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/k8s-best-practice-s01/">
+                          
+                          <img src="https://venturebeat.com/wp-content/uploads/2018/06/kubernetes-logo-1-e1512659947545.png" class="img-responsive" alt="Kubernetes最佳实践：第一季概览">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/k8s-best-practice-s01/">Kubernetes最佳实践：第一季概览</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/kubernetes101/">
+                          
+                          <img src="https://www.stavros.io/posts/kubernetes-101/sail.jpg" class="img-responsive" alt="Kubernetes101">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/kubernetes101/">Kubernetes101</a></h5>
+                    </div>
+                </div>
+                
+            </div>
+
+            <hr class="hidden-md hidden-lg">
+             
+
+        </div>
+        
+
+        
+        <div class="col-md-4 col-sm-6">
+
+          <h4>联系</h4>
+
+            <p><p><strong>未公开</strong></p>
+
+
+            <a href="/contact" class="btn btn-small btn-template-main">跳到联系页面</a>
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+    </div>
+    
+</footer>
+
+
+
+
+
+
+
+<div id="copyright">
+    <div class="container">
+        <div class="col-md-12">
+            
+            <p class="pull-left">Copyright ©️ 2018, kelvinji2009 all rights reserved.</p>
+            
+            <p class="pull-right">
+              模板来自 <a href="http://bootstrapious.com/free-templates">Bootstrapious</a>.
+              
+
+              移植到 Hugo 来自 <a href="https://github.com/devcows/hugo-universal-theme">DevCows</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    </div>
+    
+
+    <script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0/jquery.counterup.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-parallax/1.1.3/jquery-parallax.js"></script>
+<script src="https://kelvinji2009.github.io/js/front.js"></script>
+
+
+<script src="https://kelvinji2009.github.io/js/owl.carousel.min.js"></script>
+
+<script src="https://kelvinji2009.github.io/js/prism.js"></script>
+
+
+  </body>
+</html>
