@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>kubernetes最佳实践S01E02：使用命名空间管理资源 · Stay focused and keep hacking.</title>
+  <meta name="author" content="" />
+
+  
+  <meta name="keywords" content="service mesh">	
+  
+
+  
+  <meta name="description" content="Stay focused and keep hacking.">	
+  
+
+  <meta name="generator" content="Hugo 0.44" />
+
+  <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  
+  <link href="https://kelvinji2009.github.io/css/animate.css" rel="stylesheet">
+
+  
+  
+    <link href="https://kelvinji2009.github.io/css/style.violet.css" rel="stylesheet" id="theme-stylesheet">
+  
+
+
+  
+  <link href="https://kelvinji2009.github.io/css/custom.css" rel="stylesheet">
+
+  
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+  <link rel="shortcut icon" href="https://kelvinji2009.github.io/img/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="https://kelvinji2009.github.io/img/apple-touch-icon.png" />
+  
+
+  <link href="https://kelvinji2009.github.io/css/owl.carousel.css" rel="stylesheet">
+  <link href="https://kelvinji2009.github.io/css/owl.theme.css" rel="stylesheet">
+
+  <link rel="alternate" href="https://kelvinji2009.github.io/index.xml" type="application/rss+xml" title="kelvinji2009">
+
+  
+  <link rel="stylesheet" href="https://kelvinji2009.github.io/css/prism.css" />
+
+  
+  <meta property="og:title" content="kubernetes最佳实践S01E02：使用命名空间管理资源" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/blog/k8s-best-practice-s01e02//" />
+  <meta property="og:image" content="img/logo.png" />
+
+  
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+</head>
+
+
+  <body>
+
+    <div id="all">
+
+        <header>
+
+          <div class="navbar-affixed-top" data-spy="affix" data-offset-top="200">
+
+    <div class="navbar navbar-default yamm" role="navigation" id="navbar">
+
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand home" href="https://kelvinji2009.github.io/">
+                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="kubernetes最佳实践S01E02：使用命名空间管理资源 logo" class="hidden-xs hidden-sm">
+                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="kubernetes最佳实践S01E02：使用命名空间管理资源 logo" class="visible-xs visible-sm">
+                    <span class="sr-only">kubernetes最佳实践S01E02：使用命名空间管理资源 - 跳到主页</span>
+                </a>
+                <div class="navbar-buttons">
+                    <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
+                      <span class="sr-only">切换导航</span>
+                        <i class="fa fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            
+
+            <div class="navbar-collapse collapse" id="navigation">
+                <ul class="nav navbar-nav navbar-right">
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/">主页</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/blog/">博客</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/contact/">联系我</a>
+                    
+                  </li>
+                  
+                </ul>
+            </div>
+            
+
+            <div class="collapse clearfix" id="search">
+
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                        <span class="input-group-btn">
+
+                    <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
+
+                </span>
+                    </div>
+                </form>
+
+            </div>
+            
+
+        </div>
+    </div>
+    
+
+</div>
+
+
+
+
+        </header>
+
+        <div id="heading-breadcrumbs">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>kubernetes最佳实践S01E02：使用命名空间管理资源</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div id="content">
+            <div class="container">
+
+                <div class="row">
+
+                    
+
+                    <div class="col-md-9" id="blog-post">
+
+                        <p class="text-muted text-uppercase mb-small text-left">
+                        作者 <a href="https://kelvinji2009.github.io">kelvinji2009</a>
+                        
+                        |
+                        
+                        
+                        
+                        归档于<a href="https://kelvinji2009.github.io/categories/kubernetes">kubernetes</a>
+                        
+                        |
+                        
+                        发表于
+                        2018-08-12
+                        |
+                        
+                        
+                        
+                        <a href="https://kelvinji2009.github.io/tags/kubernetes/">#kubernetes</a>&nbsp;
+                        
+                        
+                        
+                        </p>
+                        <div id="post-content">
+                          
+
+<h1 id="kubernetes最佳实践s01e02-使用命名空间管理资源">kubernetes最佳实践S01E02：使用命名空间管理资源</h1>
+
+<ul>
+<li>作者：Sandeep Dinesh, Google Developer Advocate</li>
+<li>日期：2018/04/27</li>
+</ul>
+
+<p><a href="https://cloudplatform.googleblog.com/2018/04/Kubernetes-best-practices-Organizing-with-Namespaces.html">原文</a></p>
+
+<p>编者注：今天是Google Developer Advocate <code>Sandeep Dinesh</code>的七部分视频和博客系列的第二部分，介绍如何充分利用您的Kubernetes环境。</p>
+
+<p>当您开始在Kubernetes之上构建越来越多的服务时，简单的任务开始变得更加复杂。 例如，团队无法创建具有相同名称的Kubernetes <code>Service</code>或<code>Deployment</code>。 如果你有成千上万的<code>Pod</code>，只是列出它们都需要一些时间，更不用说实际管理它们了!当然，这些还只是冰山一角。</p>
+
+<p>在本期Kubernetes最佳实践中，让我们来看看如何使用Kubernetes命名空间来更轻松地管理您的Kubernetes资源。</p>
+
+<h2 id="什么是命名空间-namespace">什么是命名空间(Namespace)?</h2>
+
+<p>您可以将命名空间视为Kubernetes集群中的虚拟集群。 您可以在单个Kubernetes集群中拥有多个名称空间，并且它们在逻辑上彼此隔离。 他们可以为您和您的团队提供组织，安全甚至性能方面的帮助！</p>
+
+<h2 id="默认命名空间-default-namespace">默认命名空间(Default Namespace)</h2>
+
+<p>在大多数Kubernetes发行版中，集群开箱即用，名称空间默认为<code>default</code>。事实上，Kubernetes实际上有三个名称空间：<code>default</code>，<code>kube-system</code>（用于Kubernetes组件）和<code>kube-public</code>（ 用于公共资源）。 <code>kube-public</code>现在并没有真正使用过，而且通常单独隔离一个<code>kube-system</code>是个好主意，尤其是在<code>Google Kubernetes Engine</code>这样的托管系统中。 默认名称空间是你创建服务和应用程序的默认位置，如果你不指定<code>namespace</code>参数的话。</p>
+
+<p>这个命名空间绝对没有什么特别之处，除了Kubernetes工具是开箱即用的设置使用这个命名空间外，而且你无法删除它。 虽然它很适合入门和小型生产系统，但我建议不要在大型生产系统中使用它。 这是因为团队很容易在没有意识到的情况下，意外地覆盖或破坏其他服务。 相反，我们应该创建多个名称空间并使用它们来将服务划分为可管理的块。</p>
+
+<h2 id="创建命名空间">创建命名空间</h2>
+
+<p>不要害怕创建名称空间。 它们不会增加性能损失，而且实际上，在许多情况下它们可以提高性能，因为这样的话<code>Kubernetes API</code>使用的是较小的对象集合。</p>
+
+<p>可以使用单个命令来创建命名空间。 如果你想创建一个名为<code>test</code>的命名空间，你可以运行如下命令：</p>
+
+<pre><code class="language-shell">kubectl create namespace test
+</code></pre>
+
+<p>或者您可以像创建其他任何Kubernetes资源一样，创建一个<code>YAML</code>文件并应用它。</p>
+
+<p><code>test.yaml</code>:</p>
+
+<pre><code class="language-yaml">kind: Namespace
+apiVersion: v1
+metadata:
+  name: test
+  labels:
+    name: test
+</code></pre>
+
+<pre><code class="language-shell">kubectl apply -f test.yaml
+</code></pre>
+
+<h2 id="查看命名空间">查看命名空间</h2>
+
+<p>您可以使用以下命令查看所有命名空间：</p>
+
+<pre><code class="language-shell">kubectl get namespace
+</code></pre>
+
+<p><img src="https://1.bp.blogspot.com/-7ufbzm6MrQk/WuDCvMbwbLI/AAAAAAAAFdw/2AloDGeLGCwap_18dSV8XjzjrvWgSmb3QCLcBGAs/s1600/kubectl-get-namespace-google-cloud-platform.png" alt="kubectl-get-namespace-google-cloud-platform.png" /></p>
+
+<p>如上图，您可以看到三个内置命名空间，以及名为<code>test</code>的新命名空间。</p>
+
+<h2 id="在命名空间中创建资源">在命名空间中创建资源</h2>
+
+<p>让我们看一个简单的YAML,它用来创建一个Pod：</p>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+  labels:
+    name: mypod
+spec:
+  containers:
+  - name: mypod
+    image: nginx
+</code></pre>
+
+<p>您可能会注意到在任何地方都没有提到名称空间。 如果在此文件上运行<code>kubectl apply</code>，它将在当前活动的命名空间中创建Pod。 除非您更改它，否则这将是“默认”命名空间。</p>
+
+<p>有两种方法可以明确告诉Kubernetes您要在哪个<code>Namespace</code>中创建资源。</p>
+
+<p>一种方法是在创建资源时设置<code>namespace</code>标识：</p>
+
+<pre><code class="language-shell">kubectl apply -f pod.yaml --namespace=test
+</code></pre>
+
+<p>您还可以在YAML声明中指定命名空间:</p>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+  namespace: test
+  labels:
+    name: mypod
+spec:
+  containers:
+  - name: mypod
+    image: nginx
+</code></pre>
+
+<p>如果在YAML声明中指定命名空间，则将始终在该命名空间中创建资源。 如果您尝试使用<code>namespace</code>标志来设置另一个命名空间，则该命令将会失败。</p>
+
+<h2 id="在命名空间中查看资源">在命名空间中查看资源</h2>
+
+<p>如果你试图找到你的Pod，你可能会注意到你不能！</p>
+
+<pre><code>$ kubectl get pods
+No resources found.
+</code></pre>
+
+<p>这是因为所有命令都是针对当前active的命名空间运行的。 要查找Pod，您需要指定<code>namespace</code>。</p>
+
+<pre><code>$ kubectl get pods --namespace=test
+NAME      READY     STATUS    RESTARTS   AGE
+mypod     1/1       Running   0          10s
+</code></pre>
+
+<p>这可能会很快让人觉得很烦，特别是如果您是一个开发团队的开发人员，该团队使用自己的命名空间来处理所有事情，并且不希望对每个命令都指定<code>namespace</code>。 让我们看看我们如何解决这个问题。</p>
+
+<h2 id="管理active命名空间">管理active命名空间</h2>
+
+<p>初始状态下，您的活动命名空间是<code>default</code>。 除非在YAML中指定命名空间，否则所有Kubernetes命令都将使用当前active命名空间。</p>
+
+<p>不幸的是，尝试使用kubectl管理您的active命名空间可能会很痛苦。 幸运的是，有一个非常好的工具叫做<code>kubens</code>（由优秀的Ahmet Alp Balkan创建）可以让它变得轻而易举！</p>
+
+<p>运行<code>kubens</code>命令时，您应该看到所有命名空间，并突出显示active命名空间：</p>
+
+<p><img src="https://3.bp.blogspot.com/-XIgOnHpQNcA/WuDDf1N8PYI/AAAAAAAAFd4/GfM2Kw-jz6I_v8wtIy6iVClAVa7atbl5ACLcBGAs/s1600/kubens-command-google-cloud-platform.png" alt="kubens-command-google-cloud-platform.png" /></p>
+
+<p>要将active命名空间切换到<code>test</code>命名空间，请运行：</p>
+
+<pre><code class="language-shell">kubens test
+</code></pre>
+
+<p>现在您可以看到<code>test</code>命名空间处于active状态：</p>
+
+<p><img src="https://1.bp.blogspot.com/-74riYpXxk84/WuDDoLJWRRI/AAAAAAAAFd8/k2NHenzJy383SPPl1JpYS3qIII_Q-d3jQCLcBGAs/s1600/kubens-test-namespace-google-clou-platform.png" alt="kubens-test-namespace-google-clou-platform.png" /></p>
+
+<p>现在，如果你运行kubectl命令，命名空间将是<code>test</code>而不是<code>default</code>！
+这意味着您不需要指定命名空间来查看测试命名空间中的pod。</p>
+
+<pre><code>$ kubectl get pods
+NAME      READY     STATUS    RESTARTS   AGE
+mypod     1/1       Running   0          10m
+</code></pre>
+
+<h2 id="跨命名空间通信">跨命名空间通信</h2>
+
+<p>命名空间彼此“隐藏”，但默认情况下它们不是完全隔离的。 一个命名空间中的服务可以与另一个命名空间中的服务进行通信。 这通常非常有用，例如让您的团队的服务（在您的命名空间中）与另一个团队的服务（在另一个命名空间中）进行通信。</p>
+
+<p>当您的应用想要访问Kubernetes <code>Service</code>时，您可以使用内置的DNS服务发现，只需将您的应用指向该<code>Service</code>的名称即可。 但是，您可以在多个命名空间中创建具有相同名称的<code>Service</code>！ 值得庆幸的是，通过使用扩展形式的DNS地址很容易解决这个问题。</p>
+
+<p>Kubernetes中的服务使用通用DNS模式公开其<code>endpoint</code>。 它看起来像这样：</p>
+
+<pre><code>&lt;Service Name&gt;.&lt;Namespace Name&gt;.svc.cluster.local
+</code></pre>
+
+<p>通常，您只需要服务名称，DNS将自动解析为完整地址。 但是，如果需要访问另一个命名空间中的服务，则需使用服务名称加上命名空间名称。</p>
+
+<p>例如，如果要连接到<code>test</code>命名空间中的<code>database</code>服务，可以使用以下地址：</p>
+
+<pre><code>database.test
+</code></pre>
+
+<p>如果要连接到<code>production</code>命名空间中的<code>database</code>服务，可以使用以下地址：</p>
+
+<pre><code>database.production
+</code></pre>
+
+<p>警告：如果您创建一个映射到“com”或“org”等TLD的命名空间，然后创建一个与网站名称相同的服务，例如“google”或“reddit”，Kubernetes将拦截“google.com“或”reddit.com“的请求并将其发送到您的服务。 这通常对于测试和代理非常有用，但也可以轻松破坏集群中的内容！</p>
+
+<p>注意：如果确实要隔离命名空间，则应使用网络策略（Network Policies）来完成此操作。 更多信息请继续关注未来剧集！</p>
+
+<h2 id="命令空间粒度">命令空间粒度</h2>
+
+<p>一个常见问题是要创建多少个命名空间以及用于何种目的。 什么是可管理的块？ 创建太多的命名空间，它们会让你变得没有效率，但是创建太少，你会错过它们的好处。</p>
+
+<p>我认为答案在于您的项目或公司处于什么阶段 - 从小团队到成熟企业，每个阶段都有自己的组织架构。 根据您的具体情况，您可以采用对应的命名空间策略。</p>
+
+<h3 id="小团队">小团队</h3>
+
+<p>在这种情况下，您是一个小团队的一员，该团队正在开发5-10个微服务，可以轻松地进行团队沟通。 在这种情况下，将所有生产服务放到“默认”命名空间是个不错的选择。 根据你的个人喜好，你可能希望有一个<code>production</code>和<code>development</code>的命名空间，但你很有可能是在本地机器上使用类似Minikube搭建的开发环境。</p>
+
+<h3 id="快速成长的团队">快速成长的团队</h3>
+
+<p>在这种情况下，您有一个快速发展的团队，正在开发10多个微服务。 您开始将团队分成多个子团队，每个团队都拥有自己的微服务。 虽然每个人都可能知道整个系统是如何工作的，但是与其他人协调每一个变化变得越来越困难。 尝试在本地计算机上启动整个堆栈每天都变得越来越复杂。</p>
+
+<p>此时有必要使用多个集群或命名空间进行生产和开发。 每个团队可以选择拥有自己的命名空间，以便于管理。</p>
+
+<h3 id="大公司">大公司</h3>
+
+<p>在一家大公司，并不是每个人都了解其他人。 某个团队正致力于其他团队可能不了解的功能。 团队可能正在使用服契约(service contract)与其他微服务通信（例如，gRPC），也有可能使用服务网格(ServiceMesh)进行通信（例如，istio）。 试图在本地运行整个堆栈是不可能的。 强烈建议使用<code>Kubernetes-aware Continuous Delivery</code>系统（例如，Spinnaker）。</p>
+
+<p>此时，每个团队肯定需要自己的命名空间。 每个团队甚至可以选择多个名称空间来运行其开发和生产环境。 设置<code>RBAC</code>和<code>ResourceQuotas</code>也是一个好主意。 多个集群开始显得很有意义，但可能不一定是必要的。</p>
+
+<p>注意：我将在未来的剧集中深入研究gRPC，Istio，Spinnaker，RBAC和Resources！</p>
+
+<h3 id="企业">企业</h3>
+
+<p>在这种规模下，有些群体甚至不知道其他群体的存在。 某个组也可能是外部公司，服务之间通过标准文档定义的API来通信。 每个小组都有多个拥有一定数量微服务的团队。 这时使用我上面提到的所有工具是必要的。 人们不应该手工部署服务，同时应该被锁定在他们不拥有的命名空间之外。</p>
+
+<p>此时，拥有多个集群以减少配置不当的应用程序导致的爆炸半径，以及简化计费和资源管理可能是有意义的。</p>
+
+<h2 id="结论">结论</h2>
+
+<p>命名空间可以帮助您组织Kubernetes资源，同时可以提高团队的开发速度。 请继续关注未来的Kubernetes最佳实践剧集，我将向您展示如何锁定命名空间中的资源并为您的群集引入更多安全性和隔离性！</p>
+
+                        </div>
+                        
+                        
+
+                    </div>
+                    
+
+                    
+
+                    
+
+                    <div class="col-md-3">
+
+                        
+
+                        
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">搜索</h3>
+    </div>
+
+    <div class="panel-body">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" role="search">
+            <div class="input-group">
+                <input type="search" name="q" class="form-control" placeholder="搜索">
+                <input type="hidden" name="sitesearch" value="https://kelvinji2009.github.io/">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">分类</h3>
+    </div>
+
+    <div class="panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            
+            <li><a href="https://kelvinji2009.github.io/categories/docker">docker (4)</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/categories/kubernetes">kubernetes (5)</a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="panel sidebar-menu">
+    <div class="panel-heading">
+      <h3 class="panel-title">标签</h3>
+    </div>
+
+    <div class="panel-body">
+        <ul class="tag-cloud">
+            
+            <li><a href="https://kelvinji2009.github.io/tags/docker"><i class="fa fa-tags"></i> docker</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/istio"><i class="fa fa-tags"></i> istio</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/java"><i class="fa fa-tags"></i> java</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/java10"><i class="fa fa-tags"></i> java10</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/kubernetes"><i class="fa fa-tags"></i> kubernetes</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/nginx"><i class="fa fa-tags"></i> nginx</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/php"><i class="fa fa-tags"></i> php</a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+                        
+
+                    </div>
+                    
+
+                    
+
+                </div>
+                
+
+            </div>
+            
+        </div>
+        
+
+        <footer id="footer">
+    <div class="container">
+
+        
+        <div class="col-md-4 col-sm-6">
+            <h4>关于我们</h4>
+
+            kelvinji2009
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+        <div class="col-md-4 col-sm-6">
+
+             
+            <h4>最新博客</h4>
+
+            <div class="blog-entries">
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/k8s-best-practice-s01e02/">
+                          
+                          <img src="https://cdn-images-1.medium.com/max/1600/0*oE_d_44cAUSJ_wmg.jpg" class="img-responsive" alt="kubernetes最佳实践S01E02：使用命名空间管理资源">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/k8s-best-practice-s01e02/">kubernetes最佳实践S01E02：使用命名空间管理资源</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/k8s-best-practice-s01e01/">
+                          
+                          <img src="https://cdn-images-1.medium.com/max/1600/0*K0GIlb657-3AF8XC.jpg" class="img-responsive" alt="Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/k8s-best-practice-s01e01/">Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/k8s-best-practice-s01/">
+                          
+                          <img src="https://venturebeat.com/wp-content/uploads/2018/06/kubernetes-logo-1-e1512659947545.png" class="img-responsive" alt="Kubernetes最佳实践：第一季概览">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/k8s-best-practice-s01/">Kubernetes最佳实践：第一季概览</a></h5>
+                    </div>
+                </div>
+                
+            </div>
+
+            <hr class="hidden-md hidden-lg">
+             
+
+        </div>
+        
+
+        
+        <div class="col-md-4 col-sm-6">
+
+          <h4>联系</h4>
+
+            <p><p><strong>未公开</strong></p>
+
+
+            <a href="/contact" class="btn btn-small btn-template-main">跳到联系页面</a>
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+    </div>
+    
+</footer>
+
+
+
+
+
+
+
+<div id="copyright">
+    <div class="container">
+        <div class="col-md-12">
+            
+            <p class="pull-left">Copyright ©️ 2018, kelvinji2009 all rights reserved.</p>
+            
+            <p class="pull-right">
+              模板来自 <a href="http://bootstrapious.com/free-templates">Bootstrapious</a>.
+              
+
+              移植到 Hugo 来自 <a href="https://github.com/devcows/hugo-universal-theme">DevCows</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    </div>
+    
+
+    <script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0/jquery.counterup.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-parallax/1.1.3/jquery-parallax.js"></script>
+<script src="https://kelvinji2009.github.io/js/front.js"></script>
+
+
+<script src="https://kelvinji2009.github.io/js/owl.carousel.min.js"></script>
+
+<script src="https://kelvinji2009.github.io/js/prism.js"></script>
+
+
+  </body>
+</html>

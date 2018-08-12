@@ -6,10 +6,31 @@
     <description>Recent content in Kubernetes on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Fri, 10 Aug 2018 14:26:18 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 12 Aug 2018 22:19:22 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/categories/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>kubernetes最佳实践S01E02：使用命名空间管理资源</title>
+      <link>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e02/</link>
+      <pubDate>Sun, 12 Aug 2018 22:19:22 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e02/</guid>
+      <description>kubernetes最佳实践S01E02：使用命名空间管理资源  作者：Sandeep Dinesh, Google Developer Advocate 日期：2018/04/27  原文
+编者注：今天是Google Developer Advocate Sandeep Dinesh的七部分视频和博客系列的第二部分，介绍如何充分利用您的Kubernetes环境。
+当您开始在Kubernetes之上构建越来越多的服务时，简单的任务开始变得更加复杂。 例如，团队无法创建具有相同名称的Kubernetes Service或Deployment。 如果你有成千上万的Pod，只是列出它们都需要一些时间，更不用说实际管理它们了!当然，这些还只是冰山一角。
+在本期Kubernetes最佳实践中，让我们来看看如何使用Kubernetes命名空间来更轻松地管理您的Kubernetes资源。
+什么是命名空间(Namespace)? 您可以将命名空间视为Kubernetes集群中的虚拟集群。 您可以在单个Kubernetes集群中拥有多个名称空间，并且它们在逻辑上彼此隔离。 他们可以为您和您的团队提供组织，安全甚至性能方面的帮助！
+默认命名空间(Default Namespace) 在大多数Kubernetes发行版中，集群开箱即用，名称空间默认为default。事实上，Kubernetes实际上有三个名称空间：default，kube-system（用于Kubernetes组件）和kube-public（ 用于公共资源）。 kube-public现在并没有真正使用过，而且通常单独隔离一个kube-system是个好主意，尤其是在Google Kubernetes Engine这样的托管系统中。 默认名称空间是你创建服务和应用程序的默认位置，如果你不指定namespace参数的话。
+这个命名空间绝对没有什么特别之处，除了Kubernetes工具是开箱即用的设置使用这个命名空间外，而且你无法删除它。 虽然它很适合入门和小型生产系统，但我建议不要在大型生产系统中使用它。 这是因为团队很容易在没有意识到的情况下，意外地覆盖或破坏其他服务。 相反，我们应该创建多个名称空间并使用它们来将服务划分为可管理的块。
+创建命名空间 不要害怕创建名称空间。 它们不会增加性能损失，而且实际上，在许多情况下它们可以提高性能，因为这样的话Kubernetes API使用的是较小的对象集合。
+可以使用单个命令来创建命名空间。 如果你想创建一个名为test的命名空间，你可以运行如下命令：
+kubectl create namespace test  或者您可以像创建其他任何Kubernetes资源一样，创建一个YAML文件并应用它。
+test.yaml:
+kind: Namespace apiVersion: v1 metadata: name: test labels: name: test  kubectl apply -f test.yaml  查看命名空间 您可以使用以下命令查看所有命名空间：
+kubectl get namespace  如上图，您可以看到三个内置命名空间，以及名为test的新命名空间。</description>
+    </item>
     
     <item>
       <title>Kubernetes最佳实践S01E01：如何以及为什么构建尽量小的容器镜像</title>
