@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e04/</loc>
+    <lastmod>2018-08-18T01:42:12+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e03/</loc>
     <lastmod>2018-08-12T23:02:08+08:00</lastmod>
   </url>
@@ -54,7 +59,7 @@
   
   <url>
     <loc>https://kelvinji2009.github.io/blog/</loc>
-    <lastmod>2018-08-12T23:02:08+08:00</lastmod>
+    <lastmod>2018-08-18T01:42:12+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -95,13 +100,13 @@
   
   <url>
     <loc>https://kelvinji2009.github.io/tags/kubernetes/</loc>
-    <lastmod>2018-08-12T23:02:08+08:00</lastmod>
+    <lastmod>2018-08-18T01:42:12+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://kelvinji2009.github.io/categories/kubernetes/</loc>
-    <lastmod>2018-08-12T23:02:08+08:00</lastmod>
+    <lastmod>2018-08-18T01:42:12+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -125,7 +130,7 @@
   
   <url>
     <loc>https://kelvinji2009.github.io/</loc>
-    <lastmod>2018-08-12T23:02:08+08:00</lastmod>
+    <lastmod>2018-08-18T01:42:12+08:00</lastmod>
     <priority>0</priority>
   </url>
   

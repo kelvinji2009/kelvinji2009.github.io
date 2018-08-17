@@ -6,10 +6,39 @@
     <description>Recent content in Kubernetes on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Sun, 12 Aug 2018 23:02:08 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 18 Aug 2018 01:42:12 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/categories/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>kubernetes最佳实践S01E04：资源请求和限制</title>
+      <link>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e04/</link>
+      <pubDate>Sat, 18 Aug 2018 01:42:12 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e04/</guid>
+      <description>kubernetes最佳实践S01E04：资源请求和限制  作者：Sandeep Dinesh, Google Developer Advocate 日期：2018/05/11  原文
+编者按：今天是Google Developer Advocate Sandeep Dinesh关于如何充分利用Kubernetes环境的七部分视频和博客系列的第四部分。
+当Kubernetes调度Pod时，容器是否有足够的资源来实际运行是很重要的。 如果大型应用程序被调度到资源有限的节点上，则节点可能会耗尽内存或CPU资源，并且可能会停止工作！
+应用程序有可能占用比其应占有的资源更多的资源。 这可能是因为一个团队调整为更多的副本，而不是人工减少延迟（嘿，调整更多副本比让你的代码更高效容易得多！），或者一个错误的配置修改使CPU占用100％，进而导致程序失去控制。 无论问题是由糟糕的开发人员，或者糟糕的代码，亦或是运气不好引起的，重要的是你能掌控着你自己。
+在本期Kubernetes最佳实践中，让我们来看看如何使用资源请求和限制来解决这些问题。
+请求和限制 请求和限制是Kubernetes用于控制CPU和内存等资源的机制。 请求是保证容器得到的。 如果容器请求资源，Kubernetes将仅将其调度到可以为其提供该资源的节点上。 另一方面，限制确保容器永远不会超过某个值。 容器只允许达到限制资源值，然后无法获得更多资源。
+重要的是要记住，限制永远不会低于请求。 如果你试试这个，Kubernetes将抛出一个错误，不会让你运行容器。
+请求和限制基于单个容器。 虽然Pod通常包含一个容器，但通常也会看到Pods包含多个容器。 Pod中的每个容器都有自己的限制和请求，但由于Pod总是被认为是一个组，因此您需要将每个容器的限制和请求加在一起以获取Pod的聚合值。
+要控制容器可以拥有的请求和限制，可以在Container级别和Namespace级别设置配额。 如果您想了解有关命名空间的更多信息，请参阅我们博客系列中的上一篇文章！
+让我们看看这些是如何工作的。
+容器设置 有两种类型的资源：CPU和内存。 Kubernetes调度程序使用这些来确定运行pod的位置。
+请点击这里获取这些资源的文档。
+如果您在Google Kubernetes Engine中运行，则默认名称空间已经为您设置了一些请求和限制。
+这些默认设置适用于“Hello World”，更改它们以适合您的应用非常重要。
+资源的典型Pod spec可能看起来像这样。 这个pod有两个容器：
+Pod中的每个容器都可以设置自己的请求和限制，这些都是附加的。 因此在上面的示例中，Pod的总请求为500 mCPU，内存为128 MiB，总内存为1 CPU和256MiB。
+CPU CPU资源以毫秒定义。 如果您的容器需要运行两个完整的核心，那么您将设置值“2000m”。 如果您的容器只需要1/4的核心，那么您将设置一个“250m”的值。
+关于CPU请求要记住的一件事是，如果您输入的值大于最大节点的核心数，则永远不会调度您的pod。 假设您有一个需要四个核心的Pod，但您的Kubernetes群集由双核VM组成 - 您的pod将永远不会被调度！
+除非您的应用程序专门用于利用多个核心（科学计算和某些数据库），否则通常最好将CPU请求保持在“1”或更低，并运行更多副本以扩展它。 这为系统提供了更大的灵活性和可靠性。
+就CPU限制而言，事情变得有趣。 CPU被认为是“可压缩”资源。 如果您的应用程序开始达到您的CPU限制，Kubernetes会开始限制您的容器。 这意味着CPU将受到人为限制，使您的应用程序性能可能更差！ 但是，它不会被终止或退出。 您可以使用liveness探针的运行状况检查来确保性能未受影响。
+内存 内存资源以字节为单位定义。 通常，你给内存一个mebibyte值（这基本上与兆字节相同），实际上你可以提供从字节到PB的任何单位。</description>
+    </item>
     
     <item>
       <title>K8s Best Practice S01e03</title>
