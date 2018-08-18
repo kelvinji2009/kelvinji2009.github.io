@@ -6,7 +6,7 @@
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>加强Docker容器与Java10集成(译) · Stay focused and keep hacking.</title>
+  <title>K8s Best Practice S01e06 · Stay focused and keep hacking.</title>
   <meta name="author" content="" />
 
   
@@ -59,9 +59,9 @@
   <link rel="stylesheet" href="https://kelvinji2009.github.io/css/prism.css" />
 
   
-  <meta property="og:title" content="加强Docker容器与Java10集成(译)" />
+  <meta property="og:title" content="K8s Best Practice S01e06" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="/blog/%E5%8A%A0%E5%BC%BAdocker%E5%AE%B9%E5%99%A8%E4%B8%8Ejava10%E9%9B%86%E6%88%90%E8%AF%91//" />
+  <meta property="og:url" content="/blog/k8s-best-practice-s01e06//" />
   <meta property="og:image" content="img/logo.png" />
 
   
@@ -90,9 +90,9 @@
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand home" href="https://kelvinji2009.github.io/">
-                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="加强Docker容器与Java10集成(译) logo" class="hidden-xs hidden-sm">
-                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="加强Docker容器与Java10集成(译) logo" class="visible-xs visible-sm">
-                    <span class="sr-only">加强Docker容器与Java10集成(译) - 跳到主页</span>
+                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="K8s Best Practice S01e06 logo" class="hidden-xs hidden-sm">
+                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="K8s Best Practice S01e06 logo" class="visible-xs visible-sm">
+                    <span class="sr-only">K8s Best Practice S01e06 - 跳到主页</span>
                 </a>
                 <div class="navbar-buttons">
                     <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
@@ -159,7 +159,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>加强Docker容器与Java10集成(译)</h1>
+                <h1>K8s Best Practice S01e06</h1>
             </div>
         </div>
     </div>
@@ -182,19 +182,17 @@
                         
                         
                         
-                        归档于<a href="https://kelvinji2009.github.io/categories/docker">docker</a>
+                        归档于<a href="https://kelvinji2009.github.io/categories/kubernetes">kubernetes</a>
                         
                         |
                         
                         发表于
-                        2018-05-27
+                        2018-08-18
                         |
                         
                         
                         
-                        <a href="https://kelvinji2009.github.io/tags/docker/">#docker</a>&nbsp;
-                        
-                        <a href="https://kelvinji2009.github.io/tags/java10/">#java10</a>&nbsp;
+                        <a href="https://kelvinji2009.github.io/tags/kubernetes/">#kubernetes</a>&nbsp;
                         
                         
                         
@@ -202,79 +200,156 @@
                         <div id="post-content">
                           
 
-<h1 id="加强docker容器与java10集成-译">加强Docker容器与Java10集成(译)</h1>
+<h1 id="kubernetes最佳实践s01e06-映射外部服务">kubernetes最佳实践S01E06：映射外部服务</h1>
 
-<p><a href="https://blog.docker.com/2018/04/improved-docker-container-integration-with-java-10/">原文链接</a></p>
+<ul>
+<li>作者：Sandeep Dinesh, Google Developer Advocate</li>
+<li>日期：2018/05/25</li>
+</ul>
 
-<p>很多运行在JAVA虚拟机(JVM)中的应用，包括数据服务如Apache Spark和Kafka以及传统企业应用，都运行在容器中。最近，运行在容器里的JVM出现了由于内存和CPU资源限制和使用率导致性能损失问题。这是因为JAVA意识不到自己运行在容器中。随着JAVA 10的发布，JVM终于可以通过设置cgroup来实现这些约束。内存和CPU约束都可以直接在容器里被用来管理JAVA应用，包括：
-* 在容器里面设置内存约束
-* 在容器里设置可用的CPUs个数
-* 在容器里设置CPU约束</p>
+<p><a href="https://cloudplatform.googleblog.com/2018/05/Kubernetes-best-practices-mapping-external-services.html">原文</a></p>
 
-<p>JAVA 10的这些优化在Docker for mac/windows和Docker企业版均可正常运行。</p>
+<p>编者按：今天是Google Developer Advocate <code>Sandeep Dinesh</code>关于如何充分利用Kubernetes环境的七部分视频和博客系列的第六部分。</p>
 
-<h2 id="容器内存限制">容器内存限制</h2>
+<p>如果您像大多数Kubernetes用户一样，您可能会使用群集外的服务。 例如，您可能使用Twillio API发送短信，或者使用Google Cloud Vision API进行图像分析。</p>
 
-<p>一直到JAVA 9，JVM依然不能够通过在容器中使用标识来识别内存或CPU限制。在Java 10中，内存限制可以被自动识别，而且这个特性是默认支持的。</p>
+<p>如果您的不同环境中的应用程序连接到同一外部端点，并且没有计划将外部服务引入Kubernetes集群，则可以直接在代码中使用外部服务端点。 但是，在许多情况下情况并非如此。</p>
 
-<p>JAVA对服务器进行分级定义，如果一台服务器有2CPUs和2GB内存，那么默认的堆栈大小是1/4的物理内存。假设一个安装了docker企业版的服务器有4CPUs和2GB内存。我们来比较分别比较运行JAVA 8和JAVA 10的容器的区别。先看JAVA 8：</p>
+<p>一个很好的例子是数据库。 虽然某些云原生数据库（如Cloud Firestore或Cloud Spanner）使用单个端点进行所有访问，但大多数数据库都有针对不同实例的单独端点。</p>
 
-<pre><code class="language-shell">docker container run -it -m512 --entrypoint bash openjdk:latest
+<p>此时，您可能认为找到端点的一个好方法是使用ConfigMaps。 只需将端点地址存储在ConfigMap中，并在代码中将其用作环境变量。 虽然这种解决方案有效，但也存在一些缺点。 您需要修改部署以包含ConfigMap并编写其他代码以从环境变量中读取。 但最重要的是，如果端点地址发生更改，则可能需要重新启动所有正在运行的容器以获取更新的端点地址。</p>
 
-$ docker-java-home/bin/java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
-    uintx MaxHeapSize                              := 524288000                          {product}
-openjdk version &quot;1.8.0_162&quot;
+<p>在本期“Kubernetes最佳实践”中，让我们学习如何利用Kubernetes的内置服务发现机制来运行集群外部的服务，就像集群内的服务一样！ 这使您可以在dev和prod环境中进行校验，最终只需要在集群中迁移服务，而根本不必更改代码。</p>
+
+<h2 id="场景1-具有ip地址的群集外的数据库">场景1：具有IP地址的群集外的数据库</h2>
+
+<p>一种非常常见的情况是您托管自己的数据库，但在群集外部执行此操作，例如在Google Compute Engine实例上。 如果您在Kubernetes内部和外部运行某些服务，或者需要比Kubernetes允许的更多自定义或控制，这是非常常见的。</p>
+
+<p>您希望在某些时候，可以迁移集群内的所有服务，但在此之前，您将生活在混合世界中。 值得庆幸的是，您可以使用静态Kubernetes服务来缓解一些痛苦。</p>
+
+<p>在此示例中，我使用Cloud Launcher创建了一个MongoDB服务器。 由于它是在与Kubernetes集群相同的网络（或VPC）中创建的，因此可以使用高性能内部IP地址进行访问。 在Google Cloud中，这是默认设置，因此您无需任何特殊配置。</p>
+
+<p><img src="https://4.bp.blogspot.com/-r5AWmuJhv5g/WwYC6NJQu_I/AAAAAAAAFu0/_b5utAQQ13kiQlHL7fzUy0ZgG4V34wJqACLcBGAs/s1600/gcp-kubernetes-internal-ip-address.png" alt="gcp-kubernetes-internal-ip-address.png" /></p>
+
+<p>现在我们有了IP地址，第一步是创建服务：</p>
+
+<pre><code class="language-yaml">kind: Service
+apiVersion: v1
+metadata:
+ name: mongo
+Spec:
+ type: ClusterIP
+ ports:
+ - port: 27017
+   targetPort: 27017
 </code></pre>
 
-<p>我们可以看到最大的堆栈大小是512MB，刚好（1/4）X2GB，只是通过docker EE自动设置的，而不是通过设置容器来实现的。做个比较，我们看下在JAVA 10环境下运行同样的命令是什么结果。</p>
+<p>您可能会注意到此服务没有Pod选择器。 这会创建一个服务，但它不知道在哪里发送流量。 这允许您手动创建将从此服务接收流量的Endpoints对象。</p>
 
-<pre><code class="language-shell">docker container run -it -m512M --entrypoint bash openjdk:10-jdk
-
-$ docker-java-home/bin/java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
-   size_t MaxHeapSize                              = 134217728                                {product} {ergonomic}
-openjdk version &quot;10&quot; 2018-03-20
+<pre><code class="language-yaml">kind: Endpoints
+apiVersion: v1
+metadata:
+ name: mongo
+subsets:
+ - addresses:
+     - ip: 10.240.0.4
+   ports:
+     - port: 27017
 </code></pre>
 
-<p>上面的结果显示，容器里的内存限制非常接近我们期望的128MB。</p>
+<p>您可以看到端点手动定义数据库的IP地址，并使用与服务相同的名称。 Kubernetes使用端点中定义的所有IP地址，就像它们是常规的Kubernetes Pod一样。 现在，您可以使用简单的连接字符串访问数据库：</p>
 
-<h2 id="设置可用cpus个数">设置可用CPUs个数</h2>
-
-<p>默认情况下，每个容器可以获取到主机的CPU时钟周期是没有限制的。各种限制可以被设置来约束某个指定的容器可以获取的主机CPU时钟周期。
-JAVA 10能够识别这些限制：</p>
-
-<pre><code class="language-shell">docker container run -it --cpus 2 openjdk:10-jdk
-jshell&gt; Runtime.getRuntime().availableProcessors()
-$1 ==&gt; 2
+<pre><code>mongodb://mongo
 </code></pre>
 
-<p>所有分配给Docker EE的CPUs均获得同样比例的CPU时钟周期。这个比例可以通过调整CPU共享比重（相对于其他所有运行的容器的比重）来进行修改。
-这个比例只在运行CPU敏感的进程才生效。当一个容器中的任务是空闲状态，那么其他容器可以使用剩余的全部CPU时间。然后真实的CPU时间统计则相当依赖系统上运行的容器的个数。这些在JAVA 10中都可以设置：</p>
+<blockquote>
+<p>根本不需要在代码中使用IP地址！ 如果将来IP地址发生变化，您可以使用新IP地址更新端点，并且您的应用程序无需进行任何更改。</p>
+</blockquote>
 
-<pre><code class="language-shell">docker container run -it --cpu-shares 2048 openjdk:10-jdk
-jshell&gt; Runtime.getRuntime().availableProcessors()
-$1 ==&gt; 2
+<h2 id="场景2-具有uri的远程托管数据库">场景2：具有URI的远程托管数据库</h2>
+
+<p>如果您使用来自第三方的托管数据库服务，则可能会为您提供可用于连接的统一资源标识符（URI）。 如果他们为您提供IP地址，则可以使用方案1中的方法。</p>
+
+<p>在这个例子中，我有两个在mLab上托管的MongoDB数据库。 其中一个是我的开发数据库，另一个是生产。</p>
+
+<p><img src="https://3.bp.blogspot.com/-_RRGLSWY1Tg/WwYC6KDU0iI/AAAAAAAAFu8/QhN6S0PuL28nTFrXqitzfdyGnixLXtj3QCEwYBhgL/s1600/gcp-kubernetes-mongodb-deployments.png" alt="gcp-kubernetes-mongodb-deployments.png" /></p>
+
+<p>这些数据库的连接字符串如下：</p>
+
+<pre><code>mongodb://&lt;dbuser&gt;:&lt;dbpassword&gt;@ds149763.mlab.com:49763/dev
 </code></pre>
 
-<p>JAVA 10中也可以设置CPU集合约束（允许哪些CPU执行）。</p>
-
-<pre><code class="language-shell">docker run -it --cpuset-cpus=&quot;1,2,3&quot; openjdk:10-jdk
-jshell&gt; Runtime.getRuntime().availableProcessors()
-$1 ==&gt; 3
+<pre><code>mongodb://&lt;dbuser&gt;:&lt;dbpassword&gt;@ds145868.mlab.com:45868/prod
 </code></pre>
 
-<h2 id="分配内存和cpu">分配内存和CPU</h2>
+<p>mLab为您提供动态URI和动态端口，您可以看到它们都是不同的。 让我们使用Kubernetes为这些差异创建一个抽象层。 在这个例子中，让我们连接到dev数据库。</p>
 
-<p>使用Java 10，可以使用容器设置来估计部署应用程序所需的内存和CPU的分配。我们假设已经确定了容器中运行的每个进程的内存堆和CPU要求，并设置了JAVA_OPTS。例如，如果您有一个跨10个节点分布的应用程序，五个节点需要512Mb的内存，每个需要1024个CPU-shares，另外五个节点需要256Mb，每个512个CPU-shares。请注意，1个CPU份额比例由1024表示。</p>
+<p>您可以创建一个叫“ExternalName”的Kubernetes服务，它为您提供静态Kubernetes服务，将流量重定向到外部服务。 此服务在内核级别执行简单的CNAME重定向，因此对性能的影响非常小。</p>
 
-<p>对于内存，应用程序需要至少分配5Gb。
-512Mb x 5 = 2.56 Gb
-256Mb x 5 = 1.28 Gb</p>
+<p>该服务的YAML如下所示：</p>
 
-<p>该应用程序需要8个CPU才能高效运行。
-1024 x 5 = 5 CPUs
-512 x 5 = 3 CPUs</p>
+<pre><code class="language-yaml">kind: Service
+apiVersion: v1
+metadata:
+ name: mongo
+spec:
+ type: ExternalName
+ externalName: ds149763.mlab.com
+</code></pre>
 
-<p>最佳实践建议分析应用程序以确定运行在JVM中的每个进程的内存和CPU分配。但是，在调整容器大小以防止Java应用程序中的内存不足错误以及分配足够的CPU来处理工作负载时，Java 10消除了这些猜测。</p>
+<p>现在，您可以使用更简化的连接字符串：</p>
+
+<pre><code>mongodb://&lt;dbuser&gt;:&lt;dbpassword&gt;@mongo:&lt;port&gt;/dev
+</code></pre>
+
+<p>由于“ExternalName”使用CNAME重定向，因此无法进行端口重新映射。 对于具有静态端口的服务，这可能没问题，但不幸的是，在示例中它的端口是动态的。 mLab的免费套餐为您提供动态端口号，您无法更改它。 这意味着您需要为dev和prod使用不同的连接字符串。</p>
+
+<p>但是，如果你可以获得IP地址，那么你可以进行端口重映射，我将在下一节中解释。</p>
+
+<h2 id="场景3-具有uri和端口重新映射的远程托管数据库">场景3：具有URI和端口重新映射的远程托管数据库</h2>
+
+<p>虽然CNAME重定向适用于每个环境具有相同端口的服务，但在每个环境的不同端点使用不同端口的情况下，它略显不足。 谢天谢地，我们可以使用一些基本工具解决这个问题。</p>
+
+<p>第一步是从URI获取IP地址。</p>
+
+<p>如果对URI运行nslookup，hostname或ping命令，则可以获取数据库的IP地址。</p>
+
+<p><img src="https://2.bp.blogspot.com/-LAq32CiKAYc/WwYC6LlreYI/AAAAAAAAFvE/9_-BMf0k21Qt9PLsz_9vwLOogZ4JNBgeQCEwYBhgL/s1600/gcp-kubernetes-nslookup.png" alt="gcp-kubernetes-nslookup.png" /></p>
+
+<p>您现在可以创建重新映射mLab端口的服务以及此IP地址的端点。</p>
+
+<pre><code class="language-yaml">kind: Service
+apiVersion: v1
+metadata:
+ name: mongo
+spec:
+ ports:
+ - port: 27017
+   targetPort: 49763
+---
+kind: Endpoints
+apiVersion: v1
+metadata:
+ name: mongo
+subsets:
+ - addresses:
+     - ip: 35.188.8.12
+   ports:
+     - port: 49763
+</code></pre>
+
+<p><em>注意：URI可能使用DNS对多个IP地址进行负载均衡，因此如果IP地址发生变化，此方法可能存在风险！ 如果从上面的命令中获得多个IP地址，则可以将所有这些地址包含在端点YAML中，并且Kubernetes将对所有IP地址的流量进行负载均衡。</em></p>
+
+<p>这样，您无需指定端口即可连接到远程数据库。 Kubernetes服务透明地重新映射端口！</p>
+
+<pre><code>mongodb://&lt;dbuser&gt;:&lt;dbpassword&gt;@mongo/dev
+</code></pre>
+
+<h2 id="结论">结论</h2>
+
+<p>将外部服务映射成内部服务使您可以灵活地将这些服务引入集群，同时最大限度地减少重构工作。 即使你今天不计划这么做，那你也永远不知道明天会发生什么！ 此外，它还可以更轻松地管理和了解您的组织正在使用哪些外部服务。</p>
+
+<p>如果外部服务具有有效的域名并且您不需要端口重新映射，则使用“ExternalName”服务类型是将外部服务映射到内部服务的简单快捷的方法。 如果您没有域名或需要进行端口重新映射，只需将IP地址添加到端点并使用它。</p>
 
                         </div>
                         

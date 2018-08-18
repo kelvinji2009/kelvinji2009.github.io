@@ -40,6 +40,27 @@
     </item>
     
     <item>
+      <title>K8s Best Practice S01e06</title>
+      <link>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e06/</link>
+      <pubDate>Sat, 18 Aug 2018 19:09:26 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e06/</guid>
+      <description>kubernetes最佳实践S01E06：映射外部服务  作者：Sandeep Dinesh, Google Developer Advocate 日期：2018/05/25  原文
+编者按：今天是Google Developer Advocate Sandeep Dinesh关于如何充分利用Kubernetes环境的七部分视频和博客系列的第六部分。
+如果您像大多数Kubernetes用户一样，您可能会使用群集外的服务。 例如，您可能使用Twillio API发送短信，或者使用Google Cloud Vision API进行图像分析。
+如果您的不同环境中的应用程序连接到同一外部端点，并且没有计划将外部服务引入Kubernetes集群，则可以直接在代码中使用外部服务端点。 但是，在许多情况下情况并非如此。
+一个很好的例子是数据库。 虽然某些云原生数据库（如Cloud Firestore或Cloud Spanner）使用单个端点进行所有访问，但大多数数据库都有针对不同实例的单独端点。
+此时，您可能认为找到端点的一个好方法是使用ConfigMaps。 只需将端点地址存储在ConfigMap中，并在代码中将其用作环境变量。 虽然这种解决方案有效，但也存在一些缺点。 您需要修改部署以包含ConfigMap并编写其他代码以从环境变量中读取。 但最重要的是，如果端点地址发生更改，则可能需要重新启动所有正在运行的容器以获取更新的端点地址。
+在本期“Kubernetes最佳实践”中，让我们学习如何利用Kubernetes的内置服务发现机制来运行集群外部的服务，就像集群内的服务一样！ 这使您可以在dev和prod环境中进行校验，最终只需要在集群中迁移服务，而根本不必更改代码。
+场景1：具有IP地址的群集外的数据库 一种非常常见的情况是您托管自己的数据库，但在群集外部执行此操作，例如在Google Compute Engine实例上。 如果您在Kubernetes内部和外部运行某些服务，或者需要比Kubernetes允许的更多自定义或控制，这是非常常见的。
+您希望在某些时候，可以迁移集群内的所有服务，但在此之前，您将生活在混合世界中。 值得庆幸的是，您可以使用静态Kubernetes服务来缓解一些痛苦。
+在此示例中，我使用Cloud Launcher创建了一个MongoDB服务器。 由于它是在与Kubernetes集群相同的网络（或VPC）中创建的，因此可以使用高性能内部IP地址进行访问。 在Google Cloud中，这是默认设置，因此您无需任何特殊配置。
+现在我们有了IP地址，第一步是创建服务：
+kind: Service apiVersion: v1 metadata: name: mongo Spec: type: ClusterIP ports: - port: 27017 targetPort: 27017  您可能会注意到此服务没有Pod选择器。 这会创建一个服务，但它不知道在哪里发送流量。 这允许您手动创建将从此服务接收流量的Endpoints对象。
+kind: Endpoints apiVersion: v1 metadata: name: mongo subsets: - addresses: - ip: 10.</description>
+    </item>
+    
+    <item>
       <title>kubernetes最佳实践S01E05：优雅地终止</title>
       <link>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e05/</link>
       <pubDate>Sat, 18 Aug 2018 18:39:01 +0800</pubDate>
