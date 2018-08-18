@@ -6,10 +6,38 @@
     <description>Recent content on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Sat, 18 Aug 2018 18:39:01 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 19 Aug 2018 00:57:31 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>kubernetes最佳实践S01E07：零停机更新集群</title>
+      <link>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e07/</link>
+      <pubDate>Sun, 19 Aug 2018 00:57:31 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e07/</guid>
+      <description>kubernetes最佳实践S01E07：零停机更新集群  作者：Sandeep Dinesh, Google Developer Advocate 日期：2018/06/01  原文
+编者注：今天是Google Developer Advocate Sandeep Dinesh关于如何充分利用Kubernetes环境的七部分视频和博客系列的最后一部分。
+每个人都知道，保持应用程序最新以优化安全性和性能是一种很好的做法。 Kubernetes和Docker可以更轻松地执行这些更新，因为您可以使用更新构建新容器并相对轻松地部署它。
+就像您的应用程序一样，Kubernetes不断获得新功能和安全更新，因此底层节点和Kubernetes基础架构也需要保持最新。
+在本期Kubernetes最佳实践中，让我们来看看Google Kubernetes Engine如何让您的Kubernetes集群轻松升级！
+集群的两个部分:Master和Node 在升级群集时，需要更新两个部分：主服务器和节点。 需要首先更新主服务器，然后节点随后。 让我们看看如何使用Kubernetes Engine升级它们。
+零停机更新Masters Kubernetes Engine会在发布点发布时自动升级主服务器，但通常不会自动升级到新版本（例如，1.7到1.8）。 准备好升级到新版本后，只需单击Kubernetes Engine控制台中的升级主按钮即可。
+但是，您可能已经注意到该对话框显示以下内容：
+“更改主版本可能会导致几分钟的控制平面停机。 在此期间，您将无法编辑此群集。”
+当主服务器关闭以进行升级时，deployments，services将继续按预期工作。 但是，任何需要Kubernetes API的东西都会停止工作。 这意味着kubectl停止工作，使用Kubernetes API获取有关群集停止工作的信息的应用程序，基本上您无法在群集升级时对群集进行任何更改。
+那么如何更新主机而不会导致停机？
+具有Kubernetes Engine区域集群的高可用Masters 虽然标准的“区域”Kubernetes Engine集群只有一个主节点支持它们，但您可以创建“区域”集群，提供多区域，高可用性的主服务器。
+注意：Kubernetes Engine区域集群最近普遍可用
+创建群集时，请务必选择“区域”选项：
+就是这样！ Kubernetes引擎自动在三个区域中创建节点和主控，主控器位于负载平衡的IP地址后面，因此Kubernetes API将在升级期间继续工作。
+零停机更新Nodes 升级节点时，您可以使用几种不同的策略。 我想关注两个：
+ 滚动更新 使用节点池迁移  滚动更新 更新Kubernetes节点的最简单方法是使用滚动更新。 这是Kubernetes Engine用于更新节点的默认升级机制。
+滚动更新以下列方式工作。 一个接一个，一个释放，一个缓冲，直到该节点上不再运行pod。 然后删除该节点，并使用更新的Kubernetes版本创建新节点。 该节点启动并运行后，将更新下一个节点。 这一直持续到所有节点都更新为止。
+您可以通过在节点池上启用自动节点升级，让Kubernetes Engine完全为您管理此过程。
+如果您不选择此选项，Kubernetes Engine仪表板会在升级可用时提醒您：</description>
+    </item>
     
     <item>
       <title>kubernetes最佳实践S01E05：优雅地终止</title>
