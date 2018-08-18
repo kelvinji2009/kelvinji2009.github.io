@@ -12,12 +12,12 @@
     
     
     <item>
-      <title>kubernetes最佳实践S01E04：优雅地终止</title>
+      <title>kubernetes最佳实践S01E05：优雅地终止</title>
       <link>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e05/</link>
       <pubDate>Sat, 18 Aug 2018 18:39:01 +0800</pubDate>
       
       <guid>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e05/</guid>
-      <description>kubernetes最佳实践S01E04：优雅地终止  作者：Sandeep Dinesh, Google Developer Advocate 日期：2018/05/18  原文
+      <description>kubernetes最佳实践S01E05：优雅地终止  作者：Sandeep Dinesh, Google Developer Advocate 日期：2018/05/18  原文
 编者按：今天是Google Developer Advocate Sandeep Dinesh的七部分视频和博客系列的第五部分，介绍如何充分利用您的Kubernetes环境。
 对于分布式系统，处理故障是关键。 Kubernetes通过监视系统状态并重新启动已停止执行的服务的控制器来解决这个问题。 另一方面，Kubernetes通常可以强制终止您的应用程序，作为系统正常运行的一部分。
 在本期“Kubernetes最佳实践”中，让我们来看看如何帮助Kubernetes更有效地完成工作并体验下如何减少应用程序停机时间。
