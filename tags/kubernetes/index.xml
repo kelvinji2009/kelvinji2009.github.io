@@ -118,7 +118,7 @@ CPU CPU资源以毫秒定义。 如果您的容器需要运行两个完整的核
     </item>
     
     <item>
-      <title>K8s Best Practice S01e03</title>
+      <title>kubernetes最佳实践S01E03：设置带readiness和liveness探针的健康检查</title>
       <link>https://kelvinji2009.github.io/blog/k8s-best-practice-s01e03/</link>
       <pubDate>Sun, 12 Aug 2018 23:02:08 +0800</pubDate>
       
