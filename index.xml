@@ -6,10 +6,30 @@
     <description>Recent content on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Sun, 19 Aug 2018 00:57:31 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 26 Aug 2018 14:05:00 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Kubernetes_NodePort vs LoadBalancer vs Ingress</title>
+      <link>https://kelvinji2009.github.io/blog/kubernetes_nodeport-vs-loadbalancer-vs-ingress/</link>
+      <pubDate>Sun, 26 Aug 2018 14:05:00 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/kubernetes_nodeport-vs-loadbalancer-vs-ingress/</guid>
+      <description>Kubernetes NodePort vs LoadBalancer vs Ingress 原文
+最近，有人问我NodePorts，LoadBalancers和Ingress之间有什么区别。 它们都是将外部流量引入群集的方式，但是分别以不同的方式完成。 让我们来具体看看它们是如何工作的，以及何时使用它们。
+注意：此处的所有内容均适用于Google Kubernetes Engine。 如果您在另一个云上运行，使用minikube或其他东西，这些将略有不同。 我也没有深入了解技术细节。 如果您有兴趣了解更多信息，官方文档是一个很好的资源！
+ClusterIP ClusterIP服务是默认的Kubernetes服务。 它为您提供集群内的其他应用程序可以访问的服务。 没有外部访问权限。
+ClusterIP服务的YAML如下所示：
+apiVersion: v1 kind: Service metadata: name: my-internal-service spec: selector: app: my-app type: ClusterIP ports: - name: http port: 80 targetPort: 80 protocol: TCP  如果您无法从互联网访问ClusterIP服务，我为什么要谈论它呢？ 事实证明，您可以使用Kubernetes代理访问它！
+启动Kubernetes代理：
+$ kubectl proxy --port=8080  现在，您可以使用Kubernetes API以访问此服务：
+http://localhost:8080/api/v1/proxy/namespaces/&amp;lt;NAMESPACE&amp;gt;/services/&amp;lt;SERVICE-NAME&amp;gt;:&amp;lt;PORT-NAME&amp;gt;/  因此，要访问我们上面定义的服务，您可以使用以下地址：
+http://localhost:8080/api/v1/proxy/namespaces/default/services/my-internal-service:http/  什么时候使用Kubernetes Proxy访问服务? 在某些情况下，您可以使用Kubernetes代理来访问您的服务。
+ 调试您的服务或出于某种原因直接从您的笔记本电脑连接它们 允许内部流量，显示内部dashboard等  因为此方法要求您作为经过身份验证的用户运行kubectl，所以不应使用此方法将服务公开给Internet或将其用于生产服务。
+NodePort NodePort服务是将外部流量直接发送给您的服务的最原始方式。 顾名思义，NodePort在所有节点（VM）上打开一个特定端口，并且发送到该端口的任何流量都将转发到该服务。</description>
+    </item>
     
     <item>
       <title>kubernetes最佳实践S01E07：零停机更新集群</title>

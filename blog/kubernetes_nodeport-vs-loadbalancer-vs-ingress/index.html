@@ -6,7 +6,7 @@
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Categories · Stay focused and keep hacking.</title>
+  <title>Kubernetes_NodePort vs LoadBalancer vs Ingress · Stay focused and keep hacking.</title>
   <meta name="author" content="" />
 
   
@@ -59,9 +59,9 @@
   <link rel="stylesheet" href="https://kelvinji2009.github.io/css/prism.css" />
 
   
-  <meta property="og:title" content="Categories" />
+  <meta property="og:title" content="Kubernetes_NodePort vs LoadBalancer vs Ingress" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="/categories//" />
+  <meta property="og:url" content="/blog/kubernetes_nodeport-vs-loadbalancer-vs-ingress//" />
   <meta property="og:image" content="img/logo.png" />
 
   
@@ -90,9 +90,9 @@
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand home" href="https://kelvinji2009.github.io/">
-                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="Categories logo" class="hidden-xs hidden-sm">
-                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="Categories logo" class="visible-xs visible-sm">
-                    <span class="sr-only">Categories - 跳到主页</span>
+                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="Kubernetes_NodePort vs LoadBalancer vs Ingress logo" class="hidden-xs hidden-sm">
+                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="Kubernetes_NodePort vs LoadBalancer vs Ingress logo" class="visible-xs visible-sm">
+                    <span class="sr-only">Kubernetes_NodePort vs LoadBalancer vs Ingress - 跳到主页</span>
                 </a>
                 <div class="navbar-buttons">
                     <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
@@ -159,7 +159,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>Categories</h1>
+                <h1>Kubernetes_NodePort vs LoadBalancer vs Ingress</h1>
             </div>
         </div>
     </div>
@@ -168,23 +168,195 @@
 
         <div id="content">
             <div class="container">
+
                 <div class="row">
+
                     
 
-                    <div class="col-md-9" id="blog-listing-medium">
+                    <div class="col-md-9" id="blog-post">
 
+                        <p class="text-muted text-uppercase mb-small text-left">
+                        作者 <a href="https://kelvinji2009.github.io">kelvinji2009</a>
+                        
+                        |
+                        
+                        
+                        
+                        归档于<a href="https://kelvinji2009.github.io/categories/kubernetes">Kubernetes</a>
+                        
+                        |
+                        
+                        发表于
+                        2018-08-26
+                        |
+                        
+                        
+                        
+                        <a href="https://kelvinji2009.github.io/tags/kubernetes/">#Kubernetes</a>&nbsp;
+                        
+                        
+                        
+                        </p>
+                        <div id="post-content">
+                          
+
+<h1 id="kubernetes-nodeport-vs-loadbalancer-vs-ingress">Kubernetes NodePort vs LoadBalancer vs Ingress</h1>
+
+<p><a href="https://medium.com/google-cloud/kubernetes-nodeport-vs-loadbalancer-vs-ingress-when-should-i-use-what-922f010849e0">原文</a></p>
+
+<p>最近，有人问我NodePorts，LoadBalancers和Ingress之间有什么区别。 它们都是将外部流量引入群集的方式，但是分别以不同的方式完成。 让我们来具体看看它们是如何工作的，以及何时使用它们。</p>
+
+<p>注意：此处的所有内容均适用于Google Kubernetes Engine。 如果您在另一个云上运行，使用minikube或其他东西，这些将略有不同。 我也没有深入了解技术细节。 如果您有兴趣了解更多信息，官方文档是一个很好的资源！</p>
+
+<h2 id="clusterip">ClusterIP</h2>
+
+<p>ClusterIP服务是默认的Kubernetes服务。 它为您提供集群内的其他应用程序可以访问的服务。 没有外部访问权限。</p>
+
+<p>ClusterIP服务的YAML如下所示：</p>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:  
+  name: my-internal-service
+spec:
+  selector:    
+    app: my-app
+  type: ClusterIP
+  ports:  
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+</code></pre>
+
+<p>如果您无法从互联网访问ClusterIP服务，我为什么要谈论它呢？ 事实证明，您可以使用Kubernetes代理访问它！</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*I4j4xaaxsuchdvO66V3lAg.png" alt="1*I4j4xaaxsuchdvO66V3lAg.png" /></p>
+
+<p>启动Kubernetes代理：</p>
+
+<pre><code class="language-shell">$ kubectl proxy --port=8080
+</code></pre>
+
+<p>现在，您可以使用Kubernetes API以访问此服务：</p>
+
+<pre><code>http://localhost:8080/api/v1/proxy/namespaces/&lt;NAMESPACE&gt;/services/&lt;SERVICE-NAME&gt;:&lt;PORT-NAME&gt;/
+</code></pre>
+
+<p>因此，要访问我们上面定义的服务，您可以使用以下地址：</p>
+
+<pre><code>http://localhost:8080/api/v1/proxy/namespaces/default/services/my-internal-service:http/
+</code></pre>
+
+<h3 id="什么时候使用kubernetes-proxy访问服务">什么时候使用Kubernetes Proxy访问服务?</h3>
+
+<p>在某些情况下，您可以使用Kubernetes代理来访问您的服务。</p>
+
+<ol>
+<li>调试您的服务或出于某种原因直接从您的笔记本电脑连接它们</li>
+<li>允许内部流量，显示内部dashboard等</li>
+</ol>
+
+<p>因为此方法要求您作为经过身份验证的用户运行kubectl，所以不应使用此方法将服务公开给Internet或将其用于生产服务。</p>
+
+<h2 id="nodeport">NodePort</h2>
+
+<p>NodePort服务是将外部流量直接发送给您的服务的最原始方式。 顾名思义，NodePort在所有节点（VM）上打开一个特定端口，并且发送到该端口的任何流量都将转发到该服务。</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*CdyUtG-8CfGu2oFC5s0KwA.png" alt="1*CdyUtG-8CfGu2oFC5s0KwA.png" /></p>
+
+<p>注意：上图并不是技术上最精确的图示，但我认为它说明了NodePort的工作原理。</p>
+
+<p>NodePort服务的YAML如下所示：</p>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:  
+  name: my-nodeport-service
+spec:
+  selector:    
+    app: my-app
+  type: NodePort
+  ports:  
+  - name: http
+    port: 80
+    targetPort: 80
+    nodePort: 30036
+    protocol: TCP
+</code></pre>
+
+<p>基本上，NodePort服务与普通的“ClusterIP”服务有两点不同。 首先，类型是“NodePort”。还有一个名为nodePort的附加端口，用于指定在节点上打开的端口。 如果您不指定此端口，它将选择一个随机端口。 大多数时候你应该让Kubernetes选择端口; 正如thockin所说，对于你可以使用的端口有很多必要的说明。</p>
+
+<h3 id="什么时候使用这种方法">什么时候使用这种方法？</h3>
+
+<p>这种方法有许多缺点：</p>
+
+<ol>
+<li>每个端口只能有一个服务</li>
+<li>您只能使用端口30000-32767</li>
+<li>如果您的Node/VM的IP地址发生变化，您需要处理好</li>
+</ol>
+
+<p>出于这些原因，我不建议在生产中使用此方法直接公开您的服务。 如果您运行的服务不必始终可用，或者您的成本非常敏感，则此方法适合您。 比如演示应用程序或临时的东西。</p>
+
+<h2 id="loadbalancer">LoadBalancer</h2>
+
+<p>LoadBalancer服务是将服务公开给Internet的标准方法。 在GKE上，这将启动<code>Network Load Balancer</code>，它将为您提供单个IP地址，以便将所有流量转发到您的服务。</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*P-10bQg_1VheU9DRlvHBTQ.png" alt="1*P-10bQg_1VheU9DRlvHBTQ.png" /></p>
+
+<h3 id="什么时候使用">什么时候使用？</h3>
+
+<p>如果要直接公开服务，这是默认方法。 您指定的端口上的所有流量都将转发到该服务。 没有过滤，没有路由等。这意味着您可以向其发送几乎任何类型的流量，如HTTP，TCP，UDP，Websockets，gRPC等等。</p>
+
+<p>最大的缺点是您使用LoadBalancer公开的每个服务都将获得自己的IP地址，并且您必须为每个公开的服务支付LoadBalancer，这可能会变得昂贵！</p>
+
+<h2 id="ingress">Ingress</h2>
+
+<p>与上述所有示例不同，Ingress实际上不是一种服务。 相反，它位于多个服务的前面，充当集群中的“智能路由器”或入口点。</p>
+
+<p>您可以使用Ingress执行许多不同的操作，并且有许多类型的Ingress控制器，都具有不同的功能。</p>
+
+<p>默认的GKE ingress controller将为您启动HTTP(S)负载均衡器。 这将允许您执行基于路径和子域的路由到后端服务。 例如，您可以将<code>foo.yourdomain.com</code>上的所有内容发送到foo服务，并将<code>youdomain.com/bar/</code>下的所有内容发送到bar服务。</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*KIVa4hUVZxg-8Ncabo8pdg.png" alt="1*KIVa4hUVZxg-8Ncabo8pdg.png" /></p>
+
+<p>使用L7 HTTP负载均衡器的GKE上的Ingress对象的YAML可能如下所示：</p>
+
+<pre><code class="language-yaml">apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  backend:
+    serviceName: other
+    servicePort: 8080
+  rules:
+  - host: foo.mydomain.com
+    http:
+      paths:
+      - backend:
+          serviceName: foo
+          servicePort: 8080
+  - host: mydomain.com
+    http:
+      paths:
+      - path: /bar/*
+        backend:
+          serviceName: bar
+          servicePort: 8080
+</code></pre>
+
+<h3 id="什么时候使用-1">什么时候使用？</h3>
+
+<p>Ingress可能是暴露您的服务的最有效方式，但也可能是最复杂的。 有许多类型的Ingress控制器，来自Google Cloud Load Balancer，Nginx，Contour，Istio等。 还有Ingress控制器的插件，如cert-manager，可以为您的服务自动配置SSL证书。</p>
+
+<p>如果要在同一IP地址下公开多个服务，Ingress是最有用的，并且这些服务都使用相同的L7协议（通常是HTTP）。 如果您使用GCP集成，您只需支付一个负载均衡器，并且因为Ingress是“智能”的，您可以获得大量开箱即用的功能（如SSL，身份验证，路由等）。</p>
+
+                        </div>
                         
                         
 
-                        <ul class="pager">
-                            
-                            <li class="previous disabled"><a href="#">&larr; 更新</a></li>
-                            
-
-                            
-                            <li class="next disabled"><a href="#">更旧 &rarr;</a></li>
-                            
-                        </ul>
                     </div>
                     
 
@@ -296,6 +468,7 @@
 
                 </div>
                 
+
             </div>
             
         </div>
