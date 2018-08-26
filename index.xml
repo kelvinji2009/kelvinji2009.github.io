@@ -12,7 +12,7 @@
     
     
     <item>
-      <title>Kubernetes_NodePort vs LoadBalancer vs Ingress</title>
+      <title>Kubernetes NodePort vs LoadBalancer vs Ingress</title>
       <link>https://kelvinji2009.github.io/blog/kubernetes_nodeport-vs-loadbalancer-vs-ingress/</link>
       <pubDate>Sun, 26 Aug 2018 14:05:00 +0800</pubDate>
       
