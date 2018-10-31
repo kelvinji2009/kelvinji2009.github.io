@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HighlyAvailable and Scalable Elasticsearch on Kubernetes · Stay focused and keep hacking.</title>
+  <meta name="author" content="" />
+
+  
+  <meta name="keywords" content="service mesh">	
+  
+
+  
+  <meta name="description" content="Stay focused and keep hacking.">	
+  
+
+  <meta name="generator" content="Hugo 0.49.2" />
+
+  <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  
+  <link href="https://kelvinji2009.github.io/css/animate.css" rel="stylesheet">
+
+  
+  
+    <link href="https://kelvinji2009.github.io/css/style.violet.css" rel="stylesheet" id="theme-stylesheet">
+  
+
+
+  
+  <link href="https://kelvinji2009.github.io/css/custom.css" rel="stylesheet">
+
+  
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+  <link rel="shortcut icon" href="https://kelvinji2009.github.io/img/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="https://kelvinji2009.github.io/img/apple-touch-icon.png" />
+  
+
+  <link href="https://kelvinji2009.github.io/css/owl.carousel.css" rel="stylesheet">
+  <link href="https://kelvinji2009.github.io/css/owl.theme.css" rel="stylesheet">
+
+  <link rel="alternate" href="https://kelvinji2009.github.io/index.xml" type="application/rss+xml" title="kelvinji2009">
+
+  
+  <link rel="stylesheet" href="https://kelvinji2009.github.io/css/prism.css" />
+
+  
+  <meta property="og:title" content="HighlyAvailable and Scalable Elasticsearch on Kubernetes" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/blog/highlyavailable-and-scalable-elasticsearch-on-kubernetes//" />
+  <meta property="og:image" content="img/logo.png" />
+
+  
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?244ee1682beed82f0cc050f0ad2e7a45";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+</head>
+
+
+  <body>
+
+    <div id="all">
+
+        <header>
+
+          <div class="navbar-affixed-top" data-spy="affix" data-offset-top="200">
+
+    <div class="navbar navbar-default yamm" role="navigation" id="navbar">
+
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand home" href="https://kelvinji2009.github.io/">
+                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="HighlyAvailable and Scalable Elasticsearch on Kubernetes logo" class="hidden-xs hidden-sm">
+                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="HighlyAvailable and Scalable Elasticsearch on Kubernetes logo" class="visible-xs visible-sm">
+                    <span class="sr-only">HighlyAvailable and Scalable Elasticsearch on Kubernetes - 跳到主页</span>
+                </a>
+                <div class="navbar-buttons">
+                    <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
+                      <span class="sr-only">切换导航</span>
+                        <i class="fa fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            
+
+            <div class="navbar-collapse collapse" id="navigation">
+                <ul class="nav navbar-nav navbar-right">
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/">主页</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/blog/">博客</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/contact/">联系我</a>
+                    
+                  </li>
+                  
+                </ul>
+            </div>
+            
+
+            <div class="collapse clearfix" id="search">
+
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                        <span class="input-group-btn">
+
+                    <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
+
+                </span>
+                    </div>
+                </form>
+
+            </div>
+            
+
+        </div>
+    </div>
+    
+
+</div>
+
+
+
+
+        </header>
+
+        <div id="heading-breadcrumbs">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>HighlyAvailable and Scalable Elasticsearch on Kubernetes</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div id="content">
+            <div class="container">
+
+                <div class="row">
+
+                    
+
+                    <div class="col-md-9" id="blog-post">
+
+                        <p class="text-muted text-uppercase mb-small text-left">
+                        作者 <a href="https://kelvinji2009.github.io">kelvinji2009</a>
+                        
+                        |
+                        
+                        
+                        
+                        归档于<a href="https://kelvinji2009.github.io/categories/kubernetes">Kubernetes</a>
+                        
+                        |
+                        
+                        发表于
+                        2018-10-31
+                        |
+                        
+                        
+                        
+                        <a href="https://kelvinji2009.github.io/tags/kubernetes/">#Kubernetes</a>&nbsp;
+                        
+                        <a href="https://kelvinji2009.github.io/tags/elasticsearch/">#Elasticsearch</a>&nbsp;
+                        
+                        
+                        
+                        </p>
+                        <div id="post-content">
+                          
+
+<h1 id="kubernetes上部署高可用和可扩展的elasticsearch">Kubernetes上部署高可用和可扩展的Elasticsearch</h1>
+
+<p><a href="https://medium.com/devopslinks/https-medium-com-thakur-vaibhav23-ha-es-k8s-7e655c1b7b61">原文</a></p>
+
+<p>在上一篇文章中，我们通过扩展MongoDB副本集来了解有StatefulSets。 在这篇文章中，我们将与ES-HQ和Kibana一起使用HA Elasticsearch集群（具有不同的Master，Data和Client节点）。</p>
+
+<h3 id="先决条件">先决条件</h3>
+
+<ol>
+<li>Elasticsearch的基本知识，其Node类型及角色</li>
+<li>运行至少有3个节点的Kubernetes集群（至少4Cores 4GB）</li>
+<li>Kibana的相关知识</li>
+</ol>
+
+<h3 id="部署架构图">部署架构图</h3>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*TG61ojlzv2v-akGqwws2Ew.jpeg" alt="1*TG61ojlzv2v-akGqwws2Ew.jpeg" /></p>
+
+<ul>
+<li>Elasticsearch Data Node的Pod被部署为具有Headless Service的StatefulSets，以提供稳定的网络ID</li>
+<li>Elasticsearch Master Node的Pod被部署为具有Headless Service的副本集，这将有助于自动发现</li>
+<li>Elasticsearch Client Node的Pod部署为具有内部服务的副本集，允许访问R/W请求的Data Node</li>
+<li>Kibana和ElasticHQ Pod被部署为副本集，其服务可在Kubernetes集群外部访问，但仍在您的子网内部（除非另有要求，否则不公开）</li>
+<li>为Client Node部署HPA（Horizonal Pod Auto-scaler）以在高负载下实现自动伸缩</li>
+</ul>
+
+<h3 id="要记住的重要事项">要记住的重要事项：</h3>
+
+<ol>
+<li>设置ES_JAVA_OPT环境变量</li>
+<li>设置CLUSTER_NAME环境变量</li>
+<li>为Master Node的部署设置NUMBER_OF_MASTERS环境变量（防止脑裂问题）。如果有3个Masters，我们必须设置为2。</li>
+<li>在类似的pod中设置正确的Pod-AntiAffinity策略，以便在工作节点发生故障时确保HA。</li>
+</ol>
+
+<p>让我们直接将这些服务部署到我们的GKE集群。</p>
+
+<h3 id="master节点部署">Master节点部署</h3>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Namespace
+metadata:
+  name: elasticsearch
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: es-master
+  namespace: elasticsearch
+  labels:
+    component: elasticsearch
+    role: master
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        component: elasticsearch
+        role: master
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: role
+                  operator: In
+                  values:
+                  - master
+              topologyKey: kubernetes.io/hostname
+      initContainers:
+      - name: init-sysctl
+        image: busybox:1.27.2
+        command:
+        - sysctl
+        - -w
+        - vm.max_map_count=262144
+        securityContext:
+          privileged: true
+      containers:
+      - name: es-master
+        image: quay.io/pires/docker-elasticsearch-kubernetes:6.2.4
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: CLUSTER_NAME
+          value: my-es
+        - name: NUMBER_OF_MASTERS
+          value: &quot;2&quot;
+        - name: NODE_MASTER
+          value: &quot;true&quot;
+        - name: NODE_INGEST
+          value: &quot;false&quot;
+        - name: NODE_DATA
+          value: &quot;false&quot;
+        - name: HTTP_ENABLE
+          value: &quot;false&quot;
+        - name: ES_JAVA_OPTS
+          value: -Xms256m -Xmx256m
+        - name: PROCESSORS
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.cpu
+        resources:
+          limits:
+            cpu: 2
+        ports:
+        - containerPort: 9300
+          name: transport
+        volumeMounts:
+        - name: storage
+          mountPath: /data
+      volumes:
+          - emptyDir:
+              medium: &quot;&quot;
+            name: &quot;storage&quot;
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-discovery
+  namespace: elasticsearch
+  labels:
+    component: elasticsearch
+    role: master
+spec:
+  selector:
+    component: elasticsearch
+    role: master
+  ports:
+  - name: transport
+    port: 9300
+    protocol: TCP
+  clusterIP: None
+</code></pre>
+
+<pre><code class="language-shell">root$ kubectl apply -f es-master.yml
+root$ kubectl -n elasticsearch get all
+NAME               DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deploy/es-master   3         3         3            3           32s
+NAME                      DESIRED   CURRENT   READY     AGE
+rs/es-master-594b58b86c   3         3         3         31s
+NAME                            READY     STATUS    RESTARTS   AGE
+po/es-master-594b58b86c-9jkj2   1/1       Running   0          31s
+po/es-master-594b58b86c-bj7g7   1/1       Running   0          31s
+po/es-master-594b58b86c-lfpps   1/1       Running   0          31s
+NAME                          TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
+svc/elasticsearch-discovery   ClusterIP   None         &lt;none&gt;        9300/TCP   31s
+</code></pre>
+
+<p>有趣的是，可以从任何主节点pod的日志来见证它们之间的master选举，然后何时添加新的data和client节点。</p>
+
+<pre><code class="language-shell">root$ kubectl -n elasticsearch logs -f po/es-master-594b58b86c-9jkj2 | grep ClusterApplierService
+[2018-10-21T07:41:54,958][INFO ][o.e.c.s.ClusterApplierService] [es-master-594b58b86c-9jkj2] detected_master {es-master-594b58b86c-bj7g7}{1aFT97hQQ7yiaBc2CYShBA}{Q3QzlaG3QGazOwtUl7N75Q}{10.9.126.87}{10.9.126.87:9300}, added {{es-master-594b58b86c-lfpps}{wZQmXr5fSfWisCpOHBhaMg}{50jGPeKLSpO9RU_HhnVJCA}{10.9.124.81}{10.9.124.81:9300},{es-master-594b58b86c-bj7g7}{1aFT97hQQ7yiaBc2CYShBA}{Q3QzlaG3QGazOwtUl7N75Q}{10.9.126.87}{10.9.126.87:9300},}, reason: apply cluster state (from master [master {es-master-594b58b86c-bj7g7}{1aFT97hQQ7yiaBc2CYShBA}{Q3QzlaG3QGazOwtUl7N75Q}{10.9.126.87}{10.9.126.87:9300} committed version [3]])
+</code></pre>
+
+<p>可以看出，名为es-master-594b58b86c-bj7g7的es-master pod被选为master节点，其他2个pod被添加到这个集群。</p>
+
+<p>名为elasticsearch-discovery的Headless Service默认设置为docker镜像中的env变量，用于在节点之间进行发现。 当然这是可以被改写的。</p>
+
+<p>同样，我们可以部署Data和Client节点。 配置如下：</p>
+
+<h3 id="data节点部署">Data节点部署：</h3>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Namespace
+metadata:
+  name: elasticsearch
+---
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-ssd
+  fsType: xfs
+allowVolumeExpansion: true
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: es-data
+  namespace: elasticsearch
+  labels:
+    component: elasticsearch
+    role: data
+spec:
+  serviceName: elasticsearch-data
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        component: elasticsearch
+        role: data
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: role
+                  operator: In
+                  values:
+                  - data
+              topologyKey: kubernetes.io/hostname
+      initContainers:
+      - name: init-sysctl
+        image: busybox:1.27.2
+        command:
+        - sysctl
+        - -w
+        - vm.max_map_count=262144
+        securityContext:
+          privileged: true
+      containers:
+      - name: es-data
+        image: quay.io/pires/docker-elasticsearch-kubernetes:6.2.4
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: CLUSTER_NAME
+          value: my-es
+        - name: NODE_MASTER
+          value: &quot;false&quot;
+        - name: NODE_INGEST
+          value: &quot;false&quot;
+        - name: HTTP_ENABLE
+          value: &quot;false&quot;
+        - name: ES_JAVA_OPTS
+          value: -Xms256m -Xmx256m
+        - name: PROCESSORS
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.cpu
+        resources:
+          limits:
+            cpu: 2
+        ports:
+        - containerPort: 9300
+          name: transport
+        volumeMounts:
+        - name: storage
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: storage
+      annotations:
+        volume.beta.kubernetes.io/storage-class: &quot;fast&quot;
+    spec:
+      accessModes: [ &quot;ReadWriteOnce&quot; ]
+      storageClassName: fast
+      resources:
+        requests:
+          storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-data
+  namespace: elasticsearch
+  labels:
+    component: elasticsearch
+    role: data
+spec:
+  ports:
+  - port: 9300
+    name: transport
+  clusterIP: None
+  selector:
+    component: elasticsearch
+    role: data
+
+</code></pre>
+
+<p>Headless Service为Data节点提供稳定的网络ID，有助于它们之间的数据传输。</p>
+
+<p>在将持久卷附加到pod之前格式化它是很重要的。 这可以通过在创建storage class时指定卷类型来完成。 我们还可以设置标志以允许动态扩展。 <a href="https://kubernetes.io/blog/2018/07/12/resizing-persistent-volumes-using-kubernetes/">这里</a>可以阅读更多内容。</p>
+
+<pre><code class="language-yaml">...
+parameters:  
+  type: pd-ssd  
+  fsType: xfs
+allowVolumeExpansion: true
+...
+</code></pre>
+
+<h3 id="client节点部署">Client节点部署</h3>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Namespace
+metadata:
+  name: elasticsearch
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: es-client
+  namespace: elasticsearch
+  labels:
+    component: elasticsearch
+    role: client
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        component: elasticsearch
+        role: client
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: role
+                  operator: In
+                  values:
+                  - client
+              topologyKey: kubernetes.io/hostname
+      initContainers:
+      - name: init-sysctl
+        image: busybox:1.27.2
+        command:
+        - sysctl
+        - -w
+        - vm.max_map_count=262144
+        securityContext:
+          privileged: true
+      containers:
+      - name: es-client
+        image: quay.io/pires/docker-elasticsearch-kubernetes:6.2.4
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: CLUSTER_NAME
+          value: my-es
+        - name: NODE_MASTER
+          value: &quot;false&quot;
+        - name: NODE_DATA
+          value: &quot;false&quot;
+        - name: HTTP_ENABLE
+          value: &quot;true&quot;
+        - name: ES_JAVA_OPTS
+          value: -Xms256m -Xmx256m
+        - name: NETWORK_HOST
+          value: _site_,_lo_
+        - name: PROCESSORS
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.cpu
+        resources:
+          limits:
+            cpu: 1
+        ports:
+        - containerPort: 9200
+          name: http
+        - containerPort: 9300
+          name: transport
+        volumeMounts:
+        - name: storage
+          mountPath: /data
+      volumes:
+          - emptyDir:
+              medium: &quot;&quot;
+            name: storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: elasticsearch
+  annotations: 
+    cloud.google.com/load-balancer-type: Internal
+  labels:
+    component: elasticsearch
+    role: client
+spec:
+  selector:
+    component: elasticsearch
+    role: client
+  ports:
+  - name: http
+    port: 9200
+  type: LoadBalancer
+</code></pre>
+
+<p>此处部署的服务是从Kubernetes集群外部访问ES群集，但仍在我们的子网内部。 注释掉<code>cloud.google.com/load-balancer-type：Internal</code>可确保这一点。</p>
+
+<p>但是，如果我们的ES集群中的应用程序部署在集群中，则可以通过 <a href="http://elasticsearch.elasticsearch:9200">http://elasticsearch.elasticsearch:9200</a> 来访问ElasticSearch服务。</p>
+
+<p>创建这两个deployments后，新创建的client和data节点将自动添加到集群中。（观察master pod的日志）</p>
+
+<pre><code class="language-shell">root$ kubectl apply -f es-data.yml
+root$ kubectl -n elasticsearch get pods -l role=data
+NAME        READY     STATUS    RESTARTS   AGE
+es-data-0   1/1       Running   0          48s
+es-data-1   1/1       Running   0          28s
+--------------------------------------------------------------------
+root$ kubectl apply -f es-client.yml 
+root$ kubectl -n elasticsearch get pods -l role=client
+NAME                         READY     STATUS    RESTARTS   AGE
+es-client-69b84b46d8-kr7j4   1/1       Running   0          47s
+es-client-69b84b46d8-v5pj2   1/1       Running   0          47s
+--------------------------------------------------------------------
+root$ kubectl -n elasticsearch get all
+NAME               DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deploy/es-client   2         2         2            2           1m
+deploy/es-master   3         3         3            3           9m
+NAME                      DESIRED   CURRENT   READY     AGE
+rs/es-client-69b84b46d8   2         2         2         1m
+rs/es-master-594b58b86c   3         3         3         9m
+NAME                   DESIRED   CURRENT   AGE
+statefulsets/es-data   2         2         3m
+NAME                            READY     STATUS    RESTARTS   AGE
+po/es-client-69b84b46d8-kr7j4   1/1       Running   0          1m
+po/es-client-69b84b46d8-v5pj2   1/1       Running   0          1m
+po/es-data-0                    1/1       Running   0          3m
+po/es-data-1                    1/1       Running   0          3m
+po/es-master-594b58b86c-9jkj2   1/1       Running   0          9m
+po/es-master-594b58b86c-bj7g7   1/1       Running   0          9m
+po/es-master-594b58b86c-lfpps   1/1       Running   0          9m
+NAME                          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+svc/elasticsearch             LoadBalancer   10.9.121.160 10.9.120.8     9200:32310/TCP   1m
+svc/elasticsearch-data        ClusterIP   None           &lt;none&gt;        9300/TCP         3m
+svc/elasticsearch-discovery   ClusterIP   None           &lt;none&gt;        9300/TCP         9m
+--------------------------------------------------------------------
+#Check logs of es-master leader pod
+root$ kubectl -n elasticsearch logs po/es-master-594b58b86c-bj7g7 | grep ClusterApplierService
+[2018-10-21T07:41:53,731][INFO ][o.e.c.s.ClusterApplierService] [es-master-594b58b86c-bj7g7] new_master {es-master-594b58b86c-bj7g7}{1aFT97hQQ7yiaBc2CYShBA}{Q3QzlaG3QGazOwtUl7N75Q}{10.9.126.87}{10.9.126.87:9300}, added {{es-master-594b58b86c-lfpps}{wZQmXr5fSfWisCpOHBhaMg}{50jGPeKLSpO9RU_HhnVJCA}{10.9.124.81}{10.9.124.81:9300},}, reason: apply cluster state (from master [master {es-master-594b58b86c-bj7g7}{1aFT97hQQ7yiaBc2CYShBA}{Q3QzlaG3QGazOwtUl7N75Q}{10.9.126.87}{10.9.126.87:9300} committed version [1] source [zen-disco-elected-as-master ([1] nodes joined)[{es-master-594b58b86c-lfpps}{wZQmXr5fSfWisCpOHBhaMg}{50jGPeKLSpO9RU_HhnVJCA}{10.9.124.81}{10.9.124.81:9300}]]])
+[2018-10-21T07:41:55,162][INFO ][o.e.c.s.ClusterApplierService] [es-master-594b58b86c-bj7g7] added {{es-master-594b58b86c-9jkj2}{x9Prp1VbTq6_kALQVNwIWg}{7NHUSVpuS0mFDTXzAeKRcg}{10.9.125.81}{10.9.125.81:9300},}, reason: apply cluster state (from master [master {es-master-594b58b86c-bj7g7}{1aFT97hQQ7yiaBc2CYShBA}{Q3QzlaG3QGazOwtUl7N75Q}{10.9.126.87}{10.9.126.87:9300} committed version [3] source [zen-disco-node-join[{es-master-594b58b86c-9jkj2}{x9Prp1VbTq6_kALQVNwIWg}{7NHUSVpuS0mFDTXzAeKRcg}{10.9.125.81}{10.9.125.81:9300}]]])
+[2018-10-21T07:48:02,485][INFO ][o.e.c.s.ClusterApplierService] [es-master-594b58b86c-bj7g7] added {{es-data-0}{SAOhUiLiRkazskZ_TC6EBQ}{qirmfVJBTjSBQtHZnz-QZw}{10.9.126.88}{10.9.126.88:9300},}, reason: apply cluster state (from master [master {es-master-594b58b86c-bj7g7}{1aFT97hQQ7yiaBc2CYShBA}{Q3QzlaG3QGazOwtUl7N75Q}{10.9.126.87}{10.9.126.87:9300} committed version [4] source [zen-disco-node-join[{es-data-0}{SAOhUiLiRkazskZ_TC6EBQ}{qirmfVJBTjSBQtHZnz-QZw}{10.9.126.88}{10.9.126.88:9300}]]])
+[2018-10-21T07:48:21,984][INFO ][o.e.c.s.ClusterApplierService] [es-master-594b58b86c-bj7g7] added {{es-data-1}{fiv5Wh29TRWGPumm5ypJfA}{EXqKGSzIQquRyWRzxIOWhQ}{10.9.125.82}{10.9.125.82:9300},}, reason: apply cluster state (from master [master {es-master-594b58b86c-bj7g7}{1aFT97hQQ7yiaBc2CYShBA}{Q3QzlaG3QGazOwtUl7N75Q}{10.9.126.87}{10.9.126.87:9300} committed version [5] source [zen-disco-node-join[{es-data-1}{fiv5Wh29TRWGPumm5ypJfA}{EXqKGSzIQquRyWRzxIOWhQ}{10.9.125.82}{10.9.125.82:9300}]]])
+[2018-10-21T07:50:51,245][INFO ][o.e.c.s.ClusterApplierService] [es-master-594b58b86c-bj7g7] added {{es-client-69b84b46d8-v5pj2}{MMjA_tlTS7ux-UW44i0osg}{rOE4nB_jSmaIQVDZCjP8Rg}{10.9.125.83}{10.9.125.83:9300},}, reason: apply cluster state (from master [master {es-master-594b58b86c-bj7g7}{1aFT97hQQ7yiaBc2CYShBA}{Q3QzlaG3QGazOwtUl7N75Q}{10.9.126.87}{10.9.126.87:9300} committed version [6] source [zen-disco-node-join[{es-client-69b84b46d8-v5pj2}{MMjA_tlTS7ux-UW44i0osg}{rOE4nB_jSmaIQVDZCjP8Rg}{10.9.125.83}{10.9.125.83:9300}]]])
+[2018-10-21T07:50:58,964][INFO ][o.e.c.s.ClusterApplierService] [es-master-594b58b86c-bj7g7] added {{es-client-69b84b46d8-kr7j4}{gGC7F4diRWy2oM1TLTvNsg}{IgI6g3iZT5Sa0HsFVMpvvw}{10.9.124.82}{10.9.124.82:9300},}, reason: apply cluster state (from master [master {es-master-594b58b86c-bj7g7}{1aFT97hQQ7yiaBc2CYShBA}{Q3QzlaG3QGazOwtUl7N75Q}{10.9.126.87}{10.9.126.87:9300} committed version [7] source [zen-disco-node-join[{es-client-69b84b46d8-kr7j4}{gGC7F4diRWy2oM1TLTvNsg}{IgI6g3iZT5Sa0HsFVMpvvw}{10.9.124.82}{10.9.124.82:9300}]]])
+</code></pre>
+
+<p>leading master pod的日志清楚地描述了每个节点何时添加到集群。 这在调试问题时非常有用。</p>
+
+<p>部署完所有组件后，我们应验证以下内容：</p>
+
+<ol>
+<li>在kubernetes集群内部使用ubuntu容器进行Elasticsearch部署的验证。</li>
+</ol>
+
+<pre><code class="language-shell">root$ kubectl run my-shell --rm -i --tty --image ubuntu -- bash
+root@my-shell-68974bb7f7-pj9x6:/# curl http://elasticsearch.elasticsearch:9200/_cluster/health?pretty
+{
+&quot;cluster_name&quot; : &quot;my-es&quot;,
+&quot;status&quot; : &quot;green&quot;,
+&quot;timed_out&quot; : false,
+&quot;number_of_nodes&quot; : 7,
+&quot;number_of_data_nodes&quot; : 2,
+&quot;active_primary_shards&quot; : 0,
+&quot;active_shards&quot; : 0,
+&quot;relocating_shards&quot; : 0,
+&quot;initializing_shards&quot; : 0,
+&quot;unassigned_shards&quot; : 0,
+&quot;delayed_unassigned_shards&quot; : 0,
+&quot;number_of_pending_tasks&quot; : 0,
+&quot;number_of_in_flight_fetch&quot; : 0,
+&quot;task_max_waiting_in_queue_millis&quot; : 0,
+&quot;active_shards_percent_as_number&quot; : 100.0
+}
+</code></pre>
+
+<ol>
+<li>在kubernetes集群外部使用GCP内部LoadBalancer IP(这里是10.9.120.8)进行Elasticsearch部署的验证。</li>
+</ol>
+
+<pre><code class="language-shell">root$ curl http://10.9.120.8:9200/_cluster/health?pretty
+{
+&quot;cluster_name&quot; : &quot;my-es&quot;,
+&quot;status&quot; : &quot;green&quot;,
+&quot;timed_out&quot; : false,
+&quot;number_of_nodes&quot; : 7,
+&quot;number_of_data_nodes&quot; : 2,
+&quot;active_primary_shards&quot; : 0,
+&quot;active_shards&quot; : 0,
+&quot;relocating_shards&quot; : 0,
+&quot;initializing_shards&quot; : 0,
+&quot;unassigned_shards&quot; : 0,
+&quot;delayed_unassigned_shards&quot; : 0,
+&quot;number_of_pending_tasks&quot; : 0,
+&quot;number_of_in_flight_fetch&quot; : 0,
+&quot;task_max_waiting_in_queue_millis&quot; : 0,
+&quot;active_shards_percent_as_number&quot; : 100.0
+}
+</code></pre>
+
+<ol>
+<li>ES-Pods的Anti-Affinity规则验证。</li>
+</ol>
+
+<pre><code class="language-shell">root$ kubectl -n elasticsearch get pods -o wide 
+NAME                         READY     STATUS    RESTARTS   AGE       IP            NODE
+es-client-69b84b46d8-kr7j4   1/1       Running   0          10m       10.8.14.52   gke-cluster1-pool1-d2ef2b34-t6h9
+es-client-69b84b46d8-v5pj2   1/1       Running   0          10m       10.8.15.53   gke-cluster1-pool1-42b4fbc4-cncn
+es-data-0                    1/1       Running   0          12m       10.8.16.58   gke-cluster1-pool1-4cfd808c-kpx1
+es-data-1                    1/1       Running   0          12m       10.8.15.52   gke-cluster1-pool1-42b4fbc4-cncn
+es-master-594b58b86c-9jkj2   1/1       Running   0          18m       10.8.15.51   gke-cluster1-pool1-42b4fbc4-cncn
+es-master-594b58b86c-bj7g7   1/1       Running   0          18m       10.8.16.57   gke-cluster1-pool1-4cfd808c-kpx1
+es-master-594b58b86c-lfpps   1/1       Running   0          18m       10.8.14.51   gke-cluster1-pool1-d2ef2b34-t6h9
+</code></pre>
+
+<p>请注意，同一节点上没有2个类似的pod。 这可以在节点发生故障时确保HA。</p>
+
+<h3 id="scaling相关注意事项">Scaling相关注意事项</h3>
+
+<p>我们可以根据CPU阈值为client节点部署autoscalers。 Client节点的HPA示例可能如下所示：</p>
+
+<pre><code class="language-yaml">apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: es-client
+  namespace: elasticsearch
+spec:
+  maxReplicas: 5
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: es-client
+targetCPUUtilizationPercentage: 80
+</code></pre>
+
+<p>每当autoscaler启动时，我们都可以通过观察任何master pod的日志来观察添加到集群中的新client节点pod。</p>
+
+<p>对于Data Node Pod，我们必须使用K8 Dashboard或GKE控制台增加副本数量。 新创建的data节点将自动添加到集群中，并开始从其他节点复制数据。</p>
+
+<p>Master Node Pod不需要自动扩展，因为它们只存储集群状态信息，但是如果要添加更多data节点，请确保集群中没有偶数个master节点，同时环境变量NUMBER_OF_MASTERS也需要相应调整。</p>
+
+<h3 id="部署kibana和es-hq">部署Kibana和ES-HQ</h3>
+
+<p>Kibana是一个可视化ES数据的简单工具，ES-HQ有助于管理和监控Elasticsearch集群。 对于我们的Kibana和ES-HQ部署，我们记住以下事项：</p>
+
+<ul>
+<li>我们提供ES-Cluster的名称作为docker镜像的环境变量</li>
+<li>访问Kibana/ES-HQ部署的服务仅在我们组织内部，即不创建公共IP。 我们使用GCP内部负载均衡。</li>
+</ul>
+
+<h4 id="kibana部署">Kibana部署</h4>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Namespace
+metadata:
+  name: elasticsearch
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: es-kibana
+  namespace: elasticsearch
+  labels:
+    component: elasticsearch
+    role: kibana
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: elasticsearch
+        role: kibana
+    spec:
+      containers:
+      - name: es-kibana
+        image: docker.elastic.co/kibana/kibana-oss:6.2.2
+        env:
+        - name: CLUSTER_NAME
+          value: my-es
+        - name: ELASTICSEARCH_URL
+          value: http://elasticsearch:9200
+        resources:
+          limits:
+            cpu: 0.5
+        ports:
+        - containerPort: 5601
+          name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  annotations:
+    cloud.google.com/load-balancer-type: &quot;Internal&quot;
+  namespace: elasticsearch
+  labels:
+    component: elasticsearch
+    role: kibana
+spec:
+  selector:
+    component: elasticsearch
+    role: kibana
+  ports:
+  - name: http
+    port: 80
+    targetPort: 5601
+    protocol: TCP
+  type: LoadBalancer
+</code></pre>
+
+<h4 id="es-hq部署">ES-HQ部署</h4>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Namespace
+metadata:
+  name: elasticsearch
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: es-hq
+  namespace: elasticsearch
+  labels:
+    component: elasticsearch
+    role: hq
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: elasticsearch
+        role: hq
+    spec:
+      containers:
+      - name: es-hq
+        image: elastichq/elasticsearch-hq:release-v3.4.0
+        env:
+        - name: HQ_DEFAULT_URL
+          value: http://elasticsearch:9200
+        resources:
+          limits:
+            cpu: 0.5
+        ports:
+        - containerPort: 5000
+          name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hq
+  annotations:
+    cloud.google.com/load-balancer-type: &quot;Internal&quot;
+  namespace: elasticsearch
+  labels:
+    component: elasticsearch
+    role: hq
+spec:
+  selector:
+    component: elasticsearch
+    role: hq
+  ports:
+  - name: http
+    port: 80
+    targetPort: 5000
+    protocol: TCP
+  type: LoadBalancer
+</code></pre>
+
+<p>我们可以使用新创建的Internal LoadBalancers访问这两个服务。</p>
+
+<pre><code class="language-shell">root$ kubectl -n elasticsearch get svc -l role=kibana
+NAME      TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+kibana    LoadBalancer   10.9.121.246   10.9.120.10   80:31400/TCP   1m
+root$ kubectl -n elasticsearch get svc -l role=hq
+NAME      TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+hq        LoadBalancer   10.9.121.150   10.9.120.9    80:31499/TCP   1m
+</code></pre>
+
+<h5 id="kibana-dashboard-http-external-ip-kibana-service-app-kibana-home-g">Kibana Dashboard <code>http://&lt;External-Ip-Kibana-Service&gt;/app/kibana#/home?_g=()</code></h5>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*x_ohXVXlQDEAb0DTuOf3Og.png" alt="1*x_ohXVXlQDEAb0DTuOf3Og.png" /></p>
+
+<h5 id="elastichq-dasboard-http-external-ip-es-hq-service-clusters-my-es">ElasticHQ Dasboard <code>http://&lt;External-Ip-ES-Hq-Service&gt;/#!/clusters/my-es</code></h5>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*cP7_RzAAI7cEeRJbKFQzDg.png" alt="1*cP7_RzAAI7cEeRJbKFQzDg.png" /></p>
+
+<p>ES是最广泛使用的分布式搜索和分析系统之一，当与Kubernetes结合使用时，将消除有关扩展和HA的关键问题。 此外，使用Kubernetes部署新的ES群集需要时间。 我希望这个博客对你有用，我真的很期待改进的建议。 随意评论或联系<a href="https://www.linkedin.com/in/vaibhavthakur/">LinkedIn</a>。</p>
+
+                        </div>
+                        
+                        
+
+                    </div>
+                    
+
+                    
+
+                    
+
+                    <div class="col-md-3">
+
+                        
+
+                        
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">搜索</h3>
+    </div>
+
+    <div class="panel-body">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" role="search">
+            <div class="input-group">
+                <input type="search" name="q" class="form-control" placeholder="搜索">
+                <input type="hidden" name="sitesearch" value="https://kelvinji2009.github.io/">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">分类</h3>
+    </div>
+
+    <div class="panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            
+            <li><a href="https://kelvinji2009.github.io/categories/docker">docker (4)</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/categories/kubernetes">kubernetes (14)</a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="panel sidebar-menu">
+    <div class="panel-heading">
+      <h3 class="panel-title">标签</h3>
+    </div>
+
+    <div class="panel-body">
+        <ul class="tag-cloud">
+            
+            <li><a href="https://kelvinji2009.github.io/tags/docker"><i class="fa fa-tags"></i> docker</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/elasticsearch"><i class="fa fa-tags"></i> elasticsearch</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/istio"><i class="fa fa-tags"></i> istio</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/java"><i class="fa fa-tags"></i> java</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/java10"><i class="fa fa-tags"></i> java10</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/kubernetes"><i class="fa fa-tags"></i> kubernetes</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/mongodb"><i class="fa fa-tags"></i> mongodb</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/nginx"><i class="fa fa-tags"></i> nginx</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/php"><i class="fa fa-tags"></i> php</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/statefulsets"><i class="fa fa-tags"></i> statefulsets</a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+                        
+
+                    </div>
+                    
+
+                    
+
+                </div>
+                
+
+            </div>
+            
+        </div>
+        
+
+        <footer id="footer">
+    <div class="container">
+
+        
+        <div class="col-md-4 col-sm-6">
+            <h4>关于我们</h4>
+
+            kelvinji2009
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+        <div class="col-md-4 col-sm-6">
+
+             
+            <h4>最新博客</h4>
+
+            <div class="blog-entries">
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/highlyavailable-and-scalable-elasticsearch-on-kubernetes/">
+                          
+                          <img src="https://cdn-images-1.medium.com/max/1600/1*HXdNCVY9Mhx_gWyYIBjKow.jpeg" class="img-responsive" alt="HighlyAvailable and Scalable Elasticsearch on Kubernetes">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/highlyavailable-and-scalable-elasticsearch-on-kubernetes/">HighlyAvailable and Scalable Elasticsearch on Kubernetes</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/scaling-mongodb-on-kubernetes/">
+                          
+                          <img src="https://cdn-images-1.medium.com/max/1600/1*JR_8ybLEuRw6ZnwKtcCMPA.png" class="img-responsive" alt="Scaling Mongodb on Kubernetes">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/scaling-mongodb-on-kubernetes/">Scaling Mongodb on Kubernetes</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/an-introduction-to-the-kubernetes-dns-service/">
+                          
+                          <img src="https://community-cdn-digitalocean-com.global.ssl.fastly.net/assets/tutorials/images/large/kubernetes_tutorials.png?1539969788" class="img-responsive" alt="Kubernetes DNS 服务简介">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/an-introduction-to-the-kubernetes-dns-service/">Kubernetes DNS 服务简介</a></h5>
+                    </div>
+                </div>
+                
+            </div>
+
+            <hr class="hidden-md hidden-lg">
+             
+
+        </div>
+        
+
+        
+        <div class="col-md-4 col-sm-6">
+
+          <h4>联系</h4>
+
+            <p><p><strong>未公开</strong></p>
+
+
+            <a href="/contact" class="btn btn-small btn-template-main">跳到联系页面</a>
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+    </div>
+    
+</footer>
+
+
+
+
+
+
+
+<div id="copyright">
+    <div class="container">
+        <div class="col-md-12">
+            
+            <p class="pull-left">Copyright ©️ 2018, kelvinji2009 all rights reserved.</p>
+            
+            <p class="pull-right">
+              模板来自 <a href="http://bootstrapious.com/free-templates">Bootstrapious</a>.
+              
+
+              移植到 Hugo 来自 <a href="https://github.com/devcows/hugo-universal-theme">DevCows</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    </div>
+    
+
+    <script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0/jquery.counterup.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-parallax/1.1.3/jquery-parallax.js"></script>
+<script src="https://kelvinji2009.github.io/js/front.js"></script>
+
+
+<script src="https://kelvinji2009.github.io/js/owl.carousel.min.js"></script>
+
+<script src="https://kelvinji2009.github.io/js/prism.js"></script>
+
+
+  </body>
+</html>

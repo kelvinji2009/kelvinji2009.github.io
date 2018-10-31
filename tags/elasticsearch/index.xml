@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Elasticsearch on kelvinji2009</title>
+    <link>https://kelvinji2009.github.io/tags/elasticsearch/</link>
+    <description>Recent content in Elasticsearch on kelvinji2009</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Wed, 31 Oct 2018 14:41:34 +0800</lastBuildDate>
+    
+	<atom:link href="https://kelvinji2009.github.io/tags/elasticsearch/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>HighlyAvailable and Scalable Elasticsearch on Kubernetes</title>
+      <link>https://kelvinji2009.github.io/blog/highlyavailable-and-scalable-elasticsearch-on-kubernetes/</link>
+      <pubDate>Wed, 31 Oct 2018 14:41:34 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/highlyavailable-and-scalable-elasticsearch-on-kubernetes/</guid>
+      <description>Kubernetes上部署高可用和可扩展的Elasticsearch 原文
+在上一篇文章中，我们通过扩展MongoDB副本集来了解有StatefulSets。 在这篇文章中，我们将与ES-HQ和Kibana一起使用HA Elasticsearch集群（具有不同的Master，Data和Client节点）。
+先决条件  Elasticsearch的基本知识，其Node类型及角色 运行至少有3个节点的Kubernetes集群（至少4Cores 4GB） Kibana的相关知识  部署架构图  Elasticsearch Data Node的Pod被部署为具有Headless Service的StatefulSets，以提供稳定的网络ID Elasticsearch Master Node的Pod被部署为具有Headless Service的副本集，这将有助于自动发现 Elasticsearch Client Node的Pod部署为具有内部服务的副本集，允许访问R/W请求的Data Node Kibana和ElasticHQ Pod被部署为副本集，其服务可在Kubernetes集群外部访问，但仍在您的子网内部（除非另有要求，否则不公开） 为Client Node部署HPA（Horizonal Pod Auto-scaler）以在高负载下实现自动伸缩  要记住的重要事项：  设置ES_JAVA_OPT环境变量 设置CLUSTER_NAME环境变量 为Master Node的部署设置NUMBER_OF_MASTERS环境变量（防止脑裂问题）。如果有3个Masters，我们必须设置为2。 在类似的pod中设置正确的Pod-AntiAffinity策略，以便在工作节点发生故障时确保HA。  让我们直接将这些服务部署到我们的GKE集群。
+Master节点部署 apiVersion: v1 kind: Namespace metadata: name: elasticsearch --- apiVersion: apps/v1beta1 kind: Deployment metadata: name: es-master namespace: elasticsearch labels: component: elasticsearch role: master spec: replicas: 3 template: metadata: labels: component: elasticsearch role: master spec: affinity: podAntiAffinity: preferredDuringSchedulingIgnoredDuringExecution: - weight: 100 podAffinityTerm: labelSelector: matchExpressions: - key: role operator: In values: - master topologyKey: kubernetes.</description>
+    </item>
+    
+  </channel>
+</rss>
