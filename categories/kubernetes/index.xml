@@ -6,10 +6,28 @@
     <description>Recent content in Kubernetes on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Wed, 31 Oct 2018 09:54:07 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 31 Oct 2018 11:54:52 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/categories/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Scaling Mongodb on Kubernetes</title>
+      <link>https://kelvinji2009.github.io/blog/scaling-mongodb-on-kubernetes/</link>
+      <pubDate>Wed, 31 Oct 2018 11:54:52 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/scaling-mongodb-on-kubernetes/</guid>
+      <description>如何在 Kubernetes 上扩展 MongoDB 原文
+Kubernetes 主要用于无状态应用程序。 但是，在 1.3 版本中引入了 PetSets，之后它们演变为 StatefulSets。 官方文档将 StatefulSets 描述为“StatefulSets 旨在与有状态应用程序和分布式系统一起使用”。
+对此最好的用例之一是对数据存储服务进行编排，例如 MongoDB，ElasticSearch，Redis，Zookeeper 等。
+我们可以把 StatefulSets 的特性归纳如下：
+ 有序索引 Pods 稳定的网络 ID 有序并行的 Pods 管理 滚动更新  这些细节可以在这里找到。
+StatefulSets 的一个非常明显的特征是提供稳定网络 ID，与headless-services一起使用时，功能可以更加强大。
+我们不花费很多时间在 Kubernetes 文档中随时可以查看的信息，让我们专注于运行和扩展 MongoDB 集群。
+您需要一个可以运行的 Kubernetes 群集并启用 RBAC（推荐）。 在本教程中，我将使用 GKE 集群，但是，AWS EKS 或 Microsoft 的 AKS 或 Kops 管理的 K8S 也是可行的替代方案。
+我们将为 MongoDB 集群部署以下组件:
+ 配置 HostVM 的 Daemon Set Mongo Pods 的 Service Account 和 ClusterRole Binding 为 Pods 提供永久性存储 SSDs 的 Storage Class 访问 Mongo 容器的 Headless Service Mongo Pods Stateful Set GCP Internal LB: 从 kubernetes 集群外部访问 MongoDB(可选) 使用 Ingress 访问 Pod(可选)  值得注意的是，每个 MongoDB Pod 都会运行一个 sidecar，以便动态配置副本集。Sidecar 每 5 秒检查一次新成员。</description>
+    </item>
     
     <item>
       <title>Kubernetes DNS 服务简介</title>

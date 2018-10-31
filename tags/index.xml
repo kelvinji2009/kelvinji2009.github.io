@@ -50,9 +50,18 @@
     <item>
       <title>Kubernetes</title>
       <link>https://kelvinji2009.github.io/tags/kubernetes/</link>
-      <pubDate>Wed, 31 Oct 2018 09:54:07 +0800</pubDate>
+      <pubDate>Wed, 31 Oct 2018 11:54:52 +0800</pubDate>
       
       <guid>https://kelvinji2009.github.io/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mongodb</title>
+      <link>https://kelvinji2009.github.io/tags/mongodb/</link>
+      <pubDate>Wed, 31 Oct 2018 11:54:52 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/tags/mongodb/</guid>
       <description></description>
     </item>
     
@@ -71,6 +80,15 @@
       <pubDate>Wed, 06 Jun 2018 16:00:00 +0800</pubDate>
       
       <guid>https://kelvinji2009.github.io/tags/php/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Statefulsets</title>
+      <link>https://kelvinji2009.github.io/tags/statefulsets/</link>
+      <pubDate>Wed, 31 Oct 2018 11:54:52 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/tags/statefulsets/</guid>
       <description></description>
     </item>
     

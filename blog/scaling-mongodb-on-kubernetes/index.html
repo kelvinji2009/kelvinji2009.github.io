@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scaling Mongodb on Kubernetes · Stay focused and keep hacking.</title>
+  <meta name="author" content="" />
+
+  
+  <meta name="keywords" content="service mesh">	
+  
+
+  
+  <meta name="description" content="Stay focused and keep hacking.">	
+  
+
+  <meta name="generator" content="Hugo 0.49.2" />
+
+  <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  
+  <link href="https://kelvinji2009.github.io/css/animate.css" rel="stylesheet">
+
+  
+  
+    <link href="https://kelvinji2009.github.io/css/style.violet.css" rel="stylesheet" id="theme-stylesheet">
+  
+
+
+  
+  <link href="https://kelvinji2009.github.io/css/custom.css" rel="stylesheet">
+
+  
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+  <link rel="shortcut icon" href="https://kelvinji2009.github.io/img/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="https://kelvinji2009.github.io/img/apple-touch-icon.png" />
+  
+
+  <link href="https://kelvinji2009.github.io/css/owl.carousel.css" rel="stylesheet">
+  <link href="https://kelvinji2009.github.io/css/owl.theme.css" rel="stylesheet">
+
+  <link rel="alternate" href="https://kelvinji2009.github.io/index.xml" type="application/rss+xml" title="kelvinji2009">
+
+  
+  <link rel="stylesheet" href="https://kelvinji2009.github.io/css/prism.css" />
+
+  
+  <meta property="og:title" content="Scaling Mongodb on Kubernetes" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/blog/scaling-mongodb-on-kubernetes//" />
+  <meta property="og:image" content="img/logo.png" />
+
+  
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?244ee1682beed82f0cc050f0ad2e7a45";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+</head>
+
+
+  <body>
+
+    <div id="all">
+
+        <header>
+
+          <div class="navbar-affixed-top" data-spy="affix" data-offset-top="200">
+
+    <div class="navbar navbar-default yamm" role="navigation" id="navbar">
+
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand home" href="https://kelvinji2009.github.io/">
+                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="Scaling Mongodb on Kubernetes logo" class="hidden-xs hidden-sm">
+                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="Scaling Mongodb on Kubernetes logo" class="visible-xs visible-sm">
+                    <span class="sr-only">Scaling Mongodb on Kubernetes - 跳到主页</span>
+                </a>
+                <div class="navbar-buttons">
+                    <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
+                      <span class="sr-only">切换导航</span>
+                        <i class="fa fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            
+
+            <div class="navbar-collapse collapse" id="navigation">
+                <ul class="nav navbar-nav navbar-right">
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/">主页</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/blog/">博客</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/contact/">联系我</a>
+                    
+                  </li>
+                  
+                </ul>
+            </div>
+            
+
+            <div class="collapse clearfix" id="search">
+
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                        <span class="input-group-btn">
+
+                    <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
+
+                </span>
+                    </div>
+                </form>
+
+            </div>
+            
+
+        </div>
+    </div>
+    
+
+</div>
+
+
+
+
+        </header>
+
+        <div id="heading-breadcrumbs">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Scaling Mongodb on Kubernetes</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div id="content">
+            <div class="container">
+
+                <div class="row">
+
+                    
+
+                    <div class="col-md-9" id="blog-post">
+
+                        <p class="text-muted text-uppercase mb-small text-left">
+                        作者 <a href="https://kelvinji2009.github.io">kelvinji2009</a>
+                        
+                        |
+                        
+                        
+                        
+                        归档于<a href="https://kelvinji2009.github.io/categories/kubernetes">Kubernetes</a>
+                        
+                        |
+                        
+                        发表于
+                        2018-10-31
+                        |
+                        
+                        
+                        
+                        <a href="https://kelvinji2009.github.io/tags/kubernetes/">#Kubernetes</a>&nbsp;
+                        
+                        <a href="https://kelvinji2009.github.io/tags/mongodb/">#MongoDB</a>&nbsp;
+                        
+                        <a href="https://kelvinji2009.github.io/tags/statefulsets/">#StatefulSets</a>&nbsp;
+                        
+                        
+                        
+                        </p>
+                        <div id="post-content">
+                          
+
+<h1 id="如何在-kubernetes-上扩展-mongodb">如何在 Kubernetes 上扩展 MongoDB</h1>
+
+<p><a href="https://medium.com/@thakur.vaibhav23/scaling-mongodb-on-kubernetes-32e446c16b82">原文</a></p>
+
+<p>Kubernetes 主要用于无状态应用程序。 但是，在 1.3 版本中引入了 PetSets，之后它们演变为 StatefulSets。 官方文档将 StatefulSets 描述为“StatefulSets 旨在与有状态应用程序和分布式系统一起使用”。</p>
+
+<p>对此最好的用例之一是对数据存储服务进行编排，例如 MongoDB，ElasticSearch，Redis，Zookeeper 等。</p>
+
+<p>我们可以把 StatefulSets 的特性归纳如下：</p>
+
+<ol>
+<li>有序索引 Pods</li>
+<li>稳定的网络 ID</li>
+<li>有序并行的 Pods 管理</li>
+<li>滚动更新</li>
+</ol>
+
+<p>这些细节可以在<a href="https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/">这里</a>找到。</p>
+
+<p>StatefulSets 的一个非常明显的特征是提供稳定网络 ID，与<a href="https://kubernetes.io/docs/concepts/services-networking/service/#headless-services">headless-services</a>一起使用时，功能可以更加强大。</p>
+
+<p>我们不花费很多时间在 Kubernetes 文档中随时可以查看的信息，让我们专注于运行和扩展 MongoDB 集群。</p>
+
+<p>您需要一个可以运行的 Kubernetes 群集并启用 RBAC（推荐）。 在本教程中，我将使用 GKE 集群，但是，AWS EKS 或 Microsoft 的 AKS 或 Kops 管理的 K8S 也是可行的替代方案。</p>
+
+<p>我们将为 MongoDB 集群部署以下组件:</p>
+
+<ol>
+<li>配置 HostVM 的 Daemon Set</li>
+<li>Mongo Pods 的 Service Account 和 ClusterRole Binding</li>
+<li>为 Pods 提供永久性存储 SSDs 的 Storage Class</li>
+<li>访问 Mongo 容器的 Headless Service</li>
+<li>Mongo Pods Stateful Set</li>
+<li>GCP Internal LB: 从 kubernetes 集群外部访问 MongoDB(可选)</li>
+<li>使用 Ingress 访问 Pod(可选)</li>
+</ol>
+
+<p>值得注意的是，每个 MongoDB Pod 都会运行一个 sidecar，以便动态配置副本集。Sidecar 每 5 秒检查一次新成员。</p>
+
+<h3 id="daemon-set-for-hostvm-configuration">Daemon Set for HostVM Configuration:</h3>
+
+<pre><code class="language-yaml">kind: DaemonSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: hostvm-configurer
+  labels:
+    app: startup-script
+spec:
+  template:
+    metadata:
+      labels:
+        app: startup-script
+    spec:
+      hostPID: true
+      containers:
+        - name: hostvm-configurer-container
+          image: gcr.io/google-containers/startup-script:v1
+          securityContext:
+            privileged: true
+          env:
+            - name: STARTUP_SCRIPT
+              value: |
+                #! /bin/bash
+                set -o errexit
+                set -o pipefail
+                set -o nounset
+
+                # Disable hugepages
+                echo 'never' &gt; /sys/kernel/mm/transparent_hugepage/enabled
+                echo 'never' &gt; /sys/kernel/mm/transparent_hugepage/defrag
+</code></pre>
+
+<h3 id="configuration-for-serviceaccount-storage-class-headless-svc-and-statefulset">Configuration for ServiceAccount, Storage Class, Headless SVC and StatefulSet:</h3>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Namespace
+metadata:
+  name: mongo
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mongo
+  namespace: mongo
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: mongo
+subjects:
+  - kind: ServiceAccount
+    name: mongo
+    namespace: mongo
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-ssd
+  fsType: xfs
+allowVolumeExpansion: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: mongo
+  labels:
+    name: mongo
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  clusterIP: None
+  selector:
+    role: mongo
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: mongo
+  namespace: mongo
+spec:
+  serviceName: mongo
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        role: mongo
+        environment: staging
+        replicaset: MainRepSet
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: replicaset
+                      operator: In
+                      values:
+                        - MainRepSet
+                topologyKey: kubernetes.io/hostname
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: mongo
+      containers:
+        - name: mongo
+          image: mongo
+          command:
+            - mongod
+            - &quot;--wiredTigerCacheSizeGB&quot;
+            - &quot;0.25&quot;
+            - &quot;--bind_ip&quot;
+            - &quot;0.0.0.0&quot;
+            - &quot;--replSet&quot;
+            - MainRepSet
+            - &quot;--smallfiles&quot;
+            - &quot;--noprealloc&quot;
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+          resources:
+            requests:
+              cpu: 1
+              memory: 2Gi
+        - name: mongo-sidecar
+          image: cvallance/mongo-k8s-sidecar
+          env:
+            - name: MONGO_SIDECAR_POD_LABELS
+              value: &quot;role=mongo,environment=staging&quot;
+            - name: KUBE_NAMESPACE
+              value: &quot;mongo&quot;
+            - name: KUBERNETES_MONGO_SERVICE_NAME
+              value: &quot;mongo&quot;
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-persistent-storage
+        annotations:
+          volume.beta.kubernetes.io/storage-class: &quot;fast&quot;
+      spec:
+        accessModes: [&quot;ReadWriteOnce&quot;]
+        storageClassName: fast
+        resources:
+          requests:
+            storage: 10Gi
+</code></pre>
+
+<p>关键点：</p>
+
+<ol>
+<li>应该使用适当的环境变量仔细配置 Mongo 的 Sidecar，以及为 pod 提供的标签，和为 deployment 和 service 的命名空间。 有关 sidecar 容器的详细信息，请点击<a href="https://github.com/cvallance/mongo-k8s-sidecar">此处</a>。</li>
+<li>默认缓存大小的指导值是：“50％的 RAM 减去 1GB，或 256MB”。 鉴于所请求的内存量为 2GB，此处的 WiredTiger 缓存大小已设置为 256MB。</li>
+<li>Inter-Pod Anti-Affinity 确保在同一个工作节点上不会安排 2 个 Mongo Pod，从而使其能够适应节点故障。 此外，建议将节点保留在不同的可用区中，以便集群能够抵御区域故障。</li>
+<li>当前部署的 Service Account 具有管理员权限。 但是，它应该仅限于 DB 的命名空间。</li>
+</ol>
+
+<p>上面提到的两个配置文件也可以在<a href="https://github.com/Thakurvaibhav/k8s/tree/master/databases/mongodb">这里</a>找到。</p>
+
+<h3 id="部署-mongodb-集群">部署 MongoDB 集群</h3>
+
+<pre><code class="language-shell">kubectl apply -f configure-node.yml
+kubectl apply -f mongo.yml
+</code></pre>
+
+<p>你可以通过以下命令查看所有组件状况：</p>
+
+<pre><code class="language-shell">kubectl -n mongo get all
+</code></pre>
+
+<pre><code class="language-shell">root$ kubectl -n mongo get all
+NAME                 DESIRED   CURRENT   AGE
+statefulsets/mongo   3         3         3m
+NAME         READY     STATUS    RESTARTS   AGE
+po/mongo-0   2/2       Running   0          3m
+po/mongo-1   2/2       Running   0          2m
+po/mongo-2   2/2       Running   0          1m
+NAME        TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)     AGE
+svc/mongo   ClusterIP   None         &lt;none&gt;        27017/TCP   3m
+</code></pre>
+
+<p>如您所见，该服务没有 Cluster-IP，也没有 External-IP，它是 Headless 服务。 此服务将直接解析为 StatefulSets 的 Pod-IP。</p>
+
+<p>让我们来验证一下 DNS 解析。 我们在集群中启动了一个交互式 shell：</p>
+
+<pre><code class="language-shell">kubectl run my-shell --rm -i --tty --image ubuntu -- bash
+root@my-shell-68974bb7f7-cs4l9:/# dig mongo.mongo +search +noall +answer
+; &lt;&lt;&gt;&gt; DiG 9.11.3-1ubuntu1.1-Ubuntu &lt;&lt;&gt;&gt; mongo.mongo +search +noall +answer
+;; global options: +cmd
+mongo.mongo.svc.cluster.local. 30 IN A 10.56.7.10
+mongo.mongo.svc.cluster.local. 30 IN A 10.56.8.11
+mongo.mongo.svc.cluster.local. 30 IN A 10.56.1.4
+</code></pre>
+
+<p>服务的 DNS 规则是&lt;服务名称&gt;.&lt;服务的命名空间&gt;，因此，在我们的例子中看到的是 mongo.mongo。</p>
+
+<p>IPs（10.56.6.17,10.56.7.10,10.56.8.11）是我们的 Mongo StatefulSets 的 Pod IPs。 这可以通过在集群内部运行 nslookup 来测试。</p>
+
+<pre><code class="language-shell">root@my-shell-68974bb7f7-cs4l9:/# nslookup 10.56.6.17
+17.6.56.10.in-addr.arpa name = mongo-0.mongo.mongo.svc.cluster.local.
+root@my-shell-68974bb7f7-cs4l9:/# nslookup 10.56.7.10
+10.7.56.10.in-addr.arpa name = mongo-1.mongo.mongo.svc.cluster.local.
+root@my-shell-68974bb7f7-cs4l9:/# nslookup 10.56.8.11
+11.8.56.10.in-addr.arpa name = mongo-2.mongo.mongo.svc.cluster.local.
+</code></pre>
+
+<p>如果您的应用程序部署在 K8 的群集中，那么它可以通过以下方式访问节点:</p>
+
+<pre><code>Node-0: mongo-0.mongo.mongo.svc.cluster.local:27017
+Node-1: mongo-1.mongo.mongo.svc.cluster.local:27017
+Node-2: mongo-2.mongo.mongo.svc.cluster.local:27017
+</code></pre>
+
+<p>如果要从集群外部访问 mongo 节点，你可以为每个 pod 部署内部负载平衡或使用 Ingress Controller（如 NGINX 或 Traefik）创建一个内部 Ingress。</p>
+
+<h3 id="gcp-internal-lb-svc-configuration-可选">GCP Internal LB SVC Configuration (可选)</h3>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    cloud.google.com/load-balancer-type: Internal
+  name: mongo-0
+  namespace: mongo
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    statefulset.kubernetes.io/pod-name: mongo-0
+  type: LoadBalancer
+</code></pre>
+
+<p>为 mongo-1 和 mongo-2 也部署 2 个此类服务。</p>
+
+<p>您可以将内部负载均衡的 IP 提供给 MongoClient URI。</p>
+
+<pre><code class="language-shell">root$ kubectl -n mongo get svc
+NAME      TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)           AGE
+mongo     ClusterIP      None            &lt;none&gt;        27017/TCP         15m
+mongo-0   LoadBalancer   10.59.252.157   10.20.20.2    27017:30184/TCP   9m
+mongo-1   LoadBalancer   10.59.252.235   10.20.20.3    27017:30343/TCP   9m
+mongo-2   LoadBalancer   10.59.254.199   10.20.20.4    27017:31298/TCP   9m
+</code></pre>
+
+<p>mongo-0/1/2 的外部 IP 是新创建的 TCP 负载均衡器的 IP。 这些是您的子网或对等网络，如果有的话。</p>
+
+<h3 id="通过-ingress-访问-pods-可选">通过 Ingress 访问 Pods(可选)</h3>
+
+<p>也可以使用诸如 Nginx 之类的 Ingress Controller 来定向到 Mongo StatefulSets 的流量。 确保 ingress 服务是内部服务，而不是通过 PublicIP 公开。 Ingress 对象的配置看起来像这样：</p>
+
+<pre><code class="language-yaml">spec:
+  rules:
+    - host: mongo.example.com
+      http:
+        paths:
+          - path: &quot;/mongo-0&quot;
+            backend:
+              hostNames:
+                - mongo-0
+              serviceName: mongo # There is no extra service. This is the headless service.
+              servicePort: &quot;27017&quot;
+</code></pre>
+
+<p>请务必注意，您的应用程序至少应该知道一个当前处于启动状态的 mongo 节点，这样可以发现所有其他节点。</p>
+
+<p>我在本地 mac 上使用 Robo 3T 作为 mongo 客户端。 连接到其中一个节点后并运行 rs.status()，您可以查看副本集的详细信息，并检查是否已配置其他 2 个 Pods 并自动连接到副本集。</p>
+
+<p>rs.status()查看副本集名称和成员个数：</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*RCYiGWoLvewtHXBTRpcZ3Q.jpeg" alt="1*RCYiGWoLvewtHXBTRpcZ3Q.jpeg" /></p>
+
+<p>每个成员都可以看到 FQDN 和状态。 此 FQDN 只能从群集内部访问。</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*xvYbCWgJmcjd6ksS0dhifw.jpeg" alt="1*xvYbCWgJmcjd6ksS0dhifw.jpeg" /></p>
+
+<p>每个 secondary 成员正在同步到 mongo-0，mongo-0 是当前的 primary。</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*rrTIXV7zH58YawD0uW5eGw.jpeg" alt="1*rrTIXV7zH58YawD0uW5eGw.jpeg" /></p>
+
+<p>现在我们扩展 mongo Pods 的 Stateful Set 以检查新的 mongo 容器是否被添加到 ReplicaSet。</p>
+
+<pre><code class="language-shell">root$ kubectl -n mongo scale statefulsets mongo --replicas=4
+statefulset &quot;mongo&quot; scaled
+root$ kubectl -n mongo get pods -o wide
+NAME      READY     STATUS    RESTARTS   AGE       IP           NODE
+mongo-0   2/2       Running   0          25m       10.56.6.17   gke-k8-demo-demo-k8-pool-1-45712bb7-vfqs
+mongo-1   2/2       Running   0          24m       10.56.7.10   gke-k8-demo-demo-k8-pool-1-c6901f2e-trv5
+mongo-2   2/2       Running   0          23m       10.56.8.11   gke-k8-demo-demo-k8-pool-1-c7622fba-qayt
+mongo-3   2/2       Running   0          3m        10.56.1.4    gke-k8-demo-demo-k8-pool-1-85308bb7-89a4
+</code></pre>
+
+<p>可以看出，所有四个 pod 都部署到不同的 GKE 节点，因此我们的 Pod-Anti Affinity 策略工作正常。</p>
+
+<p>扩展操作还将自动提供持久卷，该卷将充当新 pod 的数据目录。</p>
+
+<pre><code class="language-shell">root$ kubectl -n mongo get pvc
+NAME                               STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+mongo-persistent-storage-mongo-0   Bound     pvc-337fb7d6-9f8f-11e8-bcd6-42010a940024   11G        RWO            fast           49m
+mongo-persistent-storage-mongo-1   Bound     pvc-53375e31-9f8f-11e8-bcd6-42010a940024   11G        RWO            fast           49m
+mongo-persistent-storage-mongo-2   Bound     pvc-6cee0f97-9f8f-11e8-bcd6-42010a940024   11G        RWO            fast           48m
+mongo-persistent-storage-mongo-3   Bound     pvc-3e89573f-9f92-11e8-bcd6-42010a940024   11G        RWO            fast           28m
+</code></pre>
+
+<p>要检查名为 mongo-3 的 pod 是否已添加到副本集，我们将在同一节点上再次运行 rs.status()并观察其差异。</p>
+
+<p>对于同一个的 Replicaset，成员数现在为 4。</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*NeZZY-RBs0EzUuVqam_zaQ.jpeg" alt="1*NeZZY-RBs0EzUuVqam_zaQ.jpeg" /></p>
+
+<p>新添加的成员遵循与先前成员相同的 FQDN 方案，并且还与同一主节点同步：</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*HW0lDpjmf9wT6bLaA0xImg.jpeg" alt="1*HW0lDpjmf9wT6bLaA0xImg.jpeg" /></p>
+
+<h3 id="进一步的考虑">进一步的考虑</h3>
+
+<ol>
+<li>给 Mongo Pod 的 Node Pool 打上合适的 label 并确保在 StatefulSets 和 HostVM 配置的 DaemonSets 的 Spec 中指定适当的 Node Affinity 会很有帮助。 这是因为 DaemonSet 将调整主机操作系统的一些参数，并且这些设置应仅限于 MongoDB Pod。 没有这些设置，对其他应用程序可能会更好。</li>
+<li>在 GKE 中给 Node Pool 打 Label 非常容易，可以直接从 GCP 控制台进行。</li>
+<li>虽然我们在 Pod 的 Spec 中指定了 CPU 和内存限制，但我们也可以考虑部署 VPA（Vertical Pod Autoscaler）。</li>
+<li>可以通过实施网络策略或服务网格（如 Istio）来控制从集群内部到我们的数据库的流量。</li>
+</ol>
+
+<p>如果你已经看到这里，我相信你已经浏览了整个博文。 我试图整理很多分散的信息并将其作为一个整体呈现。 我的目标是为您提供足够的信息，以便开始使用 Kubernetes 上的 Stateful Sets，并希望你们中的许多人觉得它很有用。 我们非常欢迎您提出反馈、意见或建议。:)</p>
+
+                        </div>
+                        
+                        
+
+                    </div>
+                    
+
+                    
+
+                    
+
+                    <div class="col-md-3">
+
+                        
+
+                        
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">搜索</h3>
+    </div>
+
+    <div class="panel-body">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" role="search">
+            <div class="input-group">
+                <input type="search" name="q" class="form-control" placeholder="搜索">
+                <input type="hidden" name="sitesearch" value="https://kelvinji2009.github.io/">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">分类</h3>
+    </div>
+
+    <div class="panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            
+            <li><a href="https://kelvinji2009.github.io/categories/docker">docker (4)</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/categories/kubernetes">kubernetes (13)</a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="panel sidebar-menu">
+    <div class="panel-heading">
+      <h3 class="panel-title">标签</h3>
+    </div>
+
+    <div class="panel-body">
+        <ul class="tag-cloud">
+            
+            <li><a href="https://kelvinji2009.github.io/tags/docker"><i class="fa fa-tags"></i> docker</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/istio"><i class="fa fa-tags"></i> istio</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/java"><i class="fa fa-tags"></i> java</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/java10"><i class="fa fa-tags"></i> java10</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/kubernetes"><i class="fa fa-tags"></i> kubernetes</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/mongodb"><i class="fa fa-tags"></i> mongodb</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/nginx"><i class="fa fa-tags"></i> nginx</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/php"><i class="fa fa-tags"></i> php</a>
+            </li>
+            
+            <li><a href="https://kelvinji2009.github.io/tags/statefulsets"><i class="fa fa-tags"></i> statefulsets</a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+                        
+
+                    </div>
+                    
+
+                    
+
+                </div>
+                
+
+            </div>
+            
+        </div>
+        
+
+        <footer id="footer">
+    <div class="container">
+
+        
+        <div class="col-md-4 col-sm-6">
+            <h4>关于我们</h4>
+
+            kelvinji2009
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+        <div class="col-md-4 col-sm-6">
+
+             
+            <h4>最新博客</h4>
+
+            <div class="blog-entries">
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/scaling-mongodb-on-kubernetes/">
+                          
+                          <img src="https://cdn-images-1.medium.com/max/1600/1*JR_8ybLEuRw6ZnwKtcCMPA.png" class="img-responsive" alt="Scaling Mongodb on Kubernetes">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/scaling-mongodb-on-kubernetes/">Scaling Mongodb on Kubernetes</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/an-introduction-to-the-kubernetes-dns-service/">
+                          
+                          <img src="https://community-cdn-digitalocean-com.global.ssl.fastly.net/assets/tutorials/images/large/kubernetes_tutorials.png?1539969788" class="img-responsive" alt="Kubernetes DNS 服务简介">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/an-introduction-to-the-kubernetes-dns-service/">Kubernetes DNS 服务简介</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://kelvinji2009.github.io/blog/kubernetes_nodeport-vs-loadbalancer-vs-ingress/">
+                          
+                          <img src="https://cdn-images-1.medium.com/max/1600/1*KIVa4hUVZxg-8Ncabo8pdg.png" class="img-responsive" alt="Kubernetes NodePort vs LoadBalancer vs Ingress">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://kelvinji2009.github.io/blog/kubernetes_nodeport-vs-loadbalancer-vs-ingress/">Kubernetes NodePort vs LoadBalancer vs Ingress</a></h5>
+                    </div>
+                </div>
+                
+            </div>
+
+            <hr class="hidden-md hidden-lg">
+             
+
+        </div>
+        
+
+        
+        <div class="col-md-4 col-sm-6">
+
+          <h4>联系</h4>
+
+            <p><p><strong>未公开</strong></p>
+
+
+            <a href="/contact" class="btn btn-small btn-template-main">跳到联系页面</a>
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+    </div>
+    
+</footer>
+
+
+
+
+
+
+
+<div id="copyright">
+    <div class="container">
+        <div class="col-md-12">
+            
+            <p class="pull-left">Copyright ©️ 2018, kelvinji2009 all rights reserved.</p>
+            
+            <p class="pull-right">
+              模板来自 <a href="http://bootstrapious.com/free-templates">Bootstrapious</a>.
+              
+
+              移植到 Hugo 来自 <a href="https://github.com/devcows/hugo-universal-theme">DevCows</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    </div>
+    
+
+    <script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0/jquery.counterup.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-parallax/1.1.3/jquery-parallax.js"></script>
+<script src="https://kelvinji2009.github.io/js/front.js"></script>
+
+
+<script src="https://kelvinji2009.github.io/js/owl.carousel.min.js"></script>
+
+<script src="https://kelvinji2009.github.io/js/prism.js"></script>
+
+
+  </body>
+</html>
