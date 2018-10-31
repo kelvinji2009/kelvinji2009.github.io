@@ -6,10 +6,25 @@
     <description>Recent content in Kubernetes on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Sun, 26 Aug 2018 14:05:00 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 31 Oct 2018 09:54:07 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Kubernetes DNS 服务简介</title>
+      <link>https://kelvinji2009.github.io/blog/an-introduction-to-the-kubernetes-dns-service/</link>
+      <pubDate>Wed, 31 Oct 2018 09:54:07 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/an-introduction-to-the-kubernetes-dns-service/</guid>
+      <description>Kubernetes DNS 服务简介 原文
+介绍 域名系统（DNS）是一种用于将各种类型的信息（例如 IP 地址）与易于记忆的名称相关联的系统。 默认情况下，大多数 Kubernetes 群集会自动配置内部 DNS 服务，以便为服务发现提供轻量级机制。 内置的服务发现使应用程序更容易在 Kubernetes 集群上相互查找和通信，即使在节点之间创建，删除和移动 pod 和服务时也是如此。
+最近版本的 Kubernetes 中 Kubernetes DNS 服务的实现细节已经改变。 在本文中，我们将介绍 Kubernetes DNS 服务的 kube-dns 和 CoreDNS 几个不同的实现版本。 我们一起来看看它们的运作方式以及 Kubernetes 生成的 DNS 记录。
+如果你想在开始之前就更全面地了解 DNS，请阅读“DNS 术语，组件和概念简介”。 对于您可能不熟悉的任何 Kubernetes 主题，您可以阅读“Kubernetes 简介。”
+Kubernetes DNS 服务提供什么？ 在 Kubernetes 版本 1.11 之前，Kubernetes DNS 服务基于 kube-dns。 1.11 版引入了 CoreDNS 来解决 kube-dns 的一些安全性和稳定性问题。
+无论处理实际 DNS 记录的软件如何，两种实现都以类似的方式工作：
+ 创建名为 kube-dns 的服务和一个或多个 pod。 kube-dns 服务监听来自 Kubernetes API 的服务 service 和端点 endpoint 事件，并根据需要更新其 DNS 记录。 创建，更新或删除 Kubernetes 服务及其关联的 pod 时会触发这些事件。 kubelet 将每个新 pod 的/etc/resolv.</description>
+    </item>
     
     <item>
       <title>Kubernetes NodePort vs LoadBalancer vs Ingress</title>
