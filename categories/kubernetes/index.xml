@@ -6,10 +6,26 @@
     <description>Recent content in Kubernetes on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Wed, 31 Oct 2018 14:41:34 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 02 Nov 2018 11:26:40 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/categories/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>初学者的kubernetes圣经</title>
+      <link>https://kelvinji2009.github.io/blog/kubernetes-bible-beginners/</link>
+      <pubDate>Fri, 02 Nov 2018 11:26:40 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/kubernetes-bible-beginners/</guid>
+      <description>初学者的 kubernetes 圣经 原文
+大家好，欢迎来到关于 Kubernetes 的 Level Up 系列文章。 在开始撰写本文之前，我想问你几个问题。 您或您的团队是否需要使用 Kubernetes 进行容器编排？ 你想学习 Kubernetes 是否很困惑从哪里开始？ 你愿意改变你的组织吗？ 您想简化容器软件编排吗？ 然后我想告诉你，这篇文章是所有这些问题的答案。
+Kubernetes 旨在简化事情，本文旨在为您简化 Kubernetes！ Kubernetes 是一个由 Google 开发的强大的开源系统。 它是为在集群环境中管理容器化应用程序而开发的。 Kubernetes 已经获得了普及，并且正在成为在云上部署软件的新标准。
+学习 Kubernetes 并不困难（如果导师很好），它提供了强大的能力。 学习曲线有点陡峭。 因此，让我们以简化的方式学习 Kubernetes。 本文介绍了 Kubernetes 的基本概念，架构，它是如何解决问题的等。
+Kubernetes 是什么？ 实际上 Kubernetes 本身就是一个用于在多台机器上运行和协调应用程序的系统。 该系统管理容器化应用程序和服务的生命周期。 为了管理生命周期，它使用不同的方法来提高可预测性，可伸缩性和高可用性。
+Kubernetes 用户可以自由决定应用程序的运行和通信方式。 还允许用户扩展/缩减服务，执行滚动更新，在不同应用程序版本之间切换流量等。 Kubernetes 还提供用于定义/管理应用程序的不同接口和平台原语。
+Kubernetes 硬件 Kubernetes 需要不同类型的硬件。 我们需要了解的是 Kubernetes 本身是不需要硬件的，但功能系统需要硬件。
+Nodes Kubernetes 中的节点是什么？ Kubernetes 中最小的计算单位之一被称为节点。 它是一台机器，位于一个集群中。 节点不一定需要是物理机器或硬件的一部分。 它可以是物理机器或虚拟机。 对于数据中心，节点是物理机器。对于 Google Cloud Platform，节点是虚拟机。 目前，我们正在讨论 Kubernetes 的硬件， 所以让我们相应地考虑一下。 但是不要将节点限制为“硬件”。</description>
+    </item>
     
     <item>
       <title>HighlyAvailable and Scalable Elasticsearch on Kubernetes</title>
