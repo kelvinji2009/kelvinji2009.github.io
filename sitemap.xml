@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://kelvinji2009.github.io/blog/configuring-permissions-in-kubernetes-with-rbac/</loc>
+    <lastmod>2018-11-04T16:14:23+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://kelvinji2009.github.io/blog/what_is_kubernetes/</loc>
     <lastmod>2018-11-04T01:02:54+08:00</lastmod>
   </url>
@@ -104,7 +109,7 @@
   
   <url>
     <loc>https://kelvinji2009.github.io/blog/</loc>
-    <lastmod>2018-11-04T01:02:54+08:00</lastmod>
+    <lastmod>2018-11-04T16:14:23+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -151,13 +156,13 @@
   
   <url>
     <loc>https://kelvinji2009.github.io/tags/kubernetes/</loc>
-    <lastmod>2018-11-04T01:02:54+08:00</lastmod>
+    <lastmod>2018-11-04T16:14:23+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://kelvinji2009.github.io/categories/kubernetes/</loc>
-    <lastmod>2018-11-04T01:02:54+08:00</lastmod>
+    <lastmod>2018-11-04T16:14:23+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -180,6 +185,12 @@
   </url>
   
   <url>
+    <loc>https://kelvinji2009.github.io/tags/rbac/</loc>
+    <lastmod>2018-11-04T16:14:23+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://kelvinji2009.github.io/tags/statefulsets/</loc>
     <lastmod>2018-10-31T11:54:52+08:00</lastmod>
     <priority>0</priority>
@@ -193,7 +204,7 @@
   
   <url>
     <loc>https://kelvinji2009.github.io/</loc>
-    <lastmod>2018-11-04T01:02:54+08:00</lastmod>
+    <lastmod>2018-11-04T16:14:23+08:00</lastmod>
     <priority>0</priority>
   </url>
   
