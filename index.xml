@@ -6,10 +6,23 @@
     <description>Recent content on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Mon, 05 Nov 2018 10:27:00 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 05 Nov 2018 11:45:10 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Istio Routing 极简教程</title>
+      <link>https://kelvinji2009.github.io/blog/istio-routing-basics/</link>
+      <pubDate>Mon, 05 Nov 2018 11:45:10 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/istio-routing-basics/</guid>
+      <description>Istio Routing 极简教程 原文
+在学习像 Istio 这样的新技术时，看一下示例应用程序总是一个好主意。 Istio repo 有一些示例应用程序，但它们似乎有各种不足。 文档中的 BookInfo 是一个很好的示例。 但是，对于我而言，它太冗长，服务太多，而且文档似乎专注于管理 BookInfo 应用程序，而不是从头开始构建。 有一个较小的 helloworld 例子，但它更多的是关于自动伸缩而不是其他。
+在这篇文章中，我想介绍一下基础知识，并向您展示如何从头开始构建支持 Istio 的“HelloWorld”应用程序。 要记住的一点是，Istio 只管理您应用的流量。 在这种情况下，应用程序生命周期由底层平台 Kubernetes 管理。 因此，您需要了解容器和 Kubernetes 基础知识，并且需要了解 Istio Routing 原语，例如 Gateway，VirtualService，DestinationRule。 我假设大多数人都知道容器和 Kubernetes 基础知识。 我将在本文中专注于 Istio Routing。
+基础步骤 以下这些大致就是您需要遵循的，以获得 Istio 的“HelloWorld”应用程序的步骤：
+ 创建一个 Kubernetes 集群并安装带有 sidecare 自动注入的 Istio。 使用您选择的语言创建 Hello World 应用程序，创建 Docker 镜像并将其推送到公共镜像仓库。 为你的容器创建 Kubernetes deployment 和 service。 创建 Gateway 以启用到群集的 HTTP(S)流量。 创建 VirtualService,通过 Gateway 公开 Kubernetes 服务。 （可选）如果要创建多个版本应用程序，请创建 DestinationRule 以定义可从 VirtualService 引用的 subsets。 （可选）如果要在服务网格外部调用其他外部服务，请创建 ServiceEntry。  我不会在本文中介绍步骤 1 和 2，因为它们不是特定于 Istio 的。 如果您需要有关这些步骤的帮助，可以查看我在本文末尾提到的文章。 第 3 步也不是 Istio 特定的，但它是其他一切的先决条件，所以让我们从那开始。</description>
+    </item>
     
     <item>
       <title>监控多个Kubernetes集群</title>
