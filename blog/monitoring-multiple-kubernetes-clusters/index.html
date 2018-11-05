@@ -6,7 +6,7 @@
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kubernetes NodePort vs LoadBalancer vs Ingress · Stay focused and keep hacking.</title>
+  <title>监控多个Kubernetes集群 · Stay focused and keep hacking.</title>
   <meta name="author" content="" />
 
   
@@ -59,9 +59,9 @@
   <link rel="stylesheet" href="https://kelvinji2009.github.io/css/prism.css" />
 
   
-  <meta property="og:title" content="Kubernetes NodePort vs LoadBalancer vs Ingress" />
+  <meta property="og:title" content="监控多个Kubernetes集群" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="/blog/kubernetes_nodeport-vs-loadbalancer-vs-ingress//" />
+  <meta property="og:url" content="/blog/monitoring-multiple-kubernetes-clusters//" />
   <meta property="og:image" content="img/logo.png" />
 
   
@@ -90,9 +90,9 @@
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand home" href="https://kelvinji2009.github.io/">
-                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="Kubernetes NodePort vs LoadBalancer vs Ingress logo" class="hidden-xs hidden-sm">
-                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="Kubernetes NodePort vs LoadBalancer vs Ingress logo" class="visible-xs visible-sm">
-                    <span class="sr-only">Kubernetes NodePort vs LoadBalancer vs Ingress - 跳到主页</span>
+                    <img src="https://kelvinji2009.github.io/img/logo.png" alt="监控多个Kubernetes集群 logo" class="hidden-xs hidden-sm">
+                    <img src="https://kelvinji2009.github.io/img/logo-small.png" alt="监控多个Kubernetes集群 logo" class="visible-xs visible-sm">
+                    <span class="sr-only">监控多个Kubernetes集群 - 跳到主页</span>
                 </a>
                 <div class="navbar-buttons">
                     <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
@@ -159,7 +159,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>Kubernetes NodePort vs LoadBalancer vs Ingress</h1>
+                <h1>监控多个Kubernetes集群</h1>
             </div>
         </div>
     </div>
@@ -187,12 +187,14 @@
                         |
                         
                         发表于
-                        2018-08-26
+                        2018-11-05
                         |
                         
                         
                         
                         <a href="https://kelvinji2009.github.io/tags/kubernetes/">#Kubernetes</a>&nbsp;
+                        
+                        <a href="https://kelvinji2009.github.io/tags/prometheus/">#Prometheus</a>&nbsp;
                         
                         
                         
@@ -200,158 +202,216 @@
                         <div id="post-content">
                           
 
-<h1 id="kubernetes-nodeport-vs-loadbalancer-vs-ingress">Kubernetes NodePort vs LoadBalancer vs Ingress</h1>
+<h1 id="监控多个-kubernetes-集群">监控多个 Kubernetes 集群</h1>
 
-<p><a href="https://medium.com/google-cloud/kubernetes-nodeport-vs-loadbalancer-vs-ingress-when-should-i-use-what-922f010849e0">原文</a></p>
+<p><a href="https://medium.com/thg-tech-blog/monitoring-multiple-kubernetes-clusters-88cf34442fa3">原文</a></p>
 
-<p>最近，有人问我NodePorts，LoadBalancers和Ingress之间有什么区别。 它们都是将外部流量引入群集的方式，但是分别以不同的方式完成。 让我们来具体看看它们是如何工作的，以及何时使用它们。</p>
+<p>在 THG，我们为多个团队管理 Kubernetes 集群。 为了有效地监控这些集群，我们在每个数据中心使用单个 Prometheus 实例。</p>
 
-<p>注意：此处的所有内容均适用于Google Kubernetes Engine。 如果您在另一个云上运行，使用minikube或其他东西，这些将略有不同。 我也没有深入了解技术细节。 如果您有兴趣了解更多信息，官方文档是一个很好的资源！</p>
+<p>Prometheus 是一个开源监控工具，Kubernetes 支持其开箱即用，以 Prometheus 格式公开端点上的集群运行状况和操作指标。 Prometheus 还支持使用 Kubernetes REST API 作为源来发现在集群内运行的其他标准度量指标。</p>
 
-<h2 id="clusterip">ClusterIP</h2>
+<h2 id="cluster-身份认证">Cluster 身份认证</h2>
 
-<p>ClusterIP服务是默认的Kubernetes服务。 它为您提供集群内的其他应用程序可以访问的服务。 没有外部访问权限。</p>
+<p>我们需要做的第一件事是创建一个 service account，Prometheus 实例将使用该帐户对集群进行身份验证。</p>
 
-<p>ClusterIP服务的YAML如下所示：</p>
+<p>要配置 service account 可以访问的内容，您需要设置 clusterrole 和 clusterrolebinding。 以下是 clusterrole 为 Prometheus 提供对我们感兴趣的每个资源的读取访问权限。</p>
 
-<pre><code class="language-yaml">apiVersion: v1
-kind: Service
-metadata:  
-  name: my-internal-service
-spec:
-  selector:    
-    app: my-app
-  type: ClusterIP
-  ports:  
-  - name: http
-    port: 80
-    targetPort: 80
-    protocol: TCP
-</code></pre>
+<p><a href="https://gist.github.com/ConorNevinTHG/1818ac894dc41eeee10f1835c85e81d2#file-prometheus-querier-yaml">prometheus-querier.yaml · GitHub</a></p>
 
-<p>如果您无法从互联网访问ClusterIP服务，我为什么要谈论它呢？ 事实证明，您可以使用Kubernetes代理访问它！</p>
-
-<p><img src="https://cdn-images-1.medium.com/max/1600/1*I4j4xaaxsuchdvO66V3lAg.png" alt="1*I4j4xaaxsuchdvO66V3lAg.png" /></p>
-
-<p>启动Kubernetes代理：</p>
-
-<pre><code class="language-shell">$ kubectl proxy --port=8080
-</code></pre>
-
-<p>现在，您可以使用Kubernetes API以访问此服务：</p>
-
-<pre><code>http://localhost:8080/api/v1/proxy/namespaces/&lt;NAMESPACE&gt;/services/&lt;SERVICE-NAME&gt;:&lt;PORT-NAME&gt;/
-</code></pre>
-
-<p>因此，要访问我们上面定义的服务，您可以使用以下地址：</p>
-
-<pre><code>http://localhost:8080/api/v1/proxy/namespaces/default/services/my-internal-service:http/
-</code></pre>
-
-<h3 id="什么时候使用kubernetes-proxy访问服务">什么时候使用Kubernetes Proxy访问服务?</h3>
-
-<p>在某些情况下，您可以使用Kubernetes代理来访问您的服务。</p>
-
-<ol>
-<li>调试您的服务或出于某种原因直接从您的笔记本电脑连接它们</li>
-<li>允许内部流量，显示内部dashboard等</li>
-</ol>
-
-<p>因为此方法要求您作为经过身份验证的用户运行kubectl，所以不应使用此方法将服务公开给Internet或将其用于生产服务。</p>
-
-<h2 id="nodeport">NodePort</h2>
-
-<p>NodePort服务是将外部流量直接发送给您的服务的最原始方式。 顾名思义，NodePort在所有节点（VM）上打开一个特定端口，并且发送到该端口的任何流量都将转发到该服务。</p>
-
-<p><img src="https://cdn-images-1.medium.com/max/1600/1*CdyUtG-8CfGu2oFC5s0KwA.png" alt="1*CdyUtG-8CfGu2oFC5s0KwA.png" /></p>
-
-<p>注意：上图并不是技术上最精确的图示，但我认为它说明了NodePort的工作原理。</p>
-
-<p>NodePort服务的YAML如下所示：</p>
-
-<pre><code class="language-yaml">apiVersion: v1
-kind: Service
-metadata:  
-  name: my-nodeport-service
-spec:
-  selector:    
-    app: my-app
-  type: NodePort
-  ports:  
-  - name: http
-    port: 80
-    targetPort: 80
-    nodePort: 30036
-    protocol: TCP
-</code></pre>
-
-<p>基本上，NodePort服务与普通的“ClusterIP”服务有两点不同。 首先，类型是“NodePort”。还有一个名为nodePort的附加端口，用于指定在节点上打开的端口。 如果您不指定此端口，它将选择一个随机端口。 大多数时候你应该让Kubernetes选择端口; 正如thockin所说，对于你可以使用的端口有很多必要的说明。</p>
-
-<h3 id="什么时候使用这种方法">什么时候使用这种方法？</h3>
-
-<p>这种方法有许多缺点：</p>
-
-<ol>
-<li>每个端口只能有一个服务</li>
-<li>您只能使用端口30000-32767</li>
-<li>如果您的Node/VM的IP地址发生变化，您需要处理好</li>
-</ol>
-
-<p>出于这些原因，我不建议在生产中使用此方法直接公开您的服务。 如果您运行的服务不必始终可用，或者您的成本非常敏感，则此方法适合您。 比如演示应用程序或临时的东西。</p>
-
-<h2 id="loadbalancer">LoadBalancer</h2>
-
-<p>LoadBalancer服务是将服务公开给Internet的标准方法。 在GKE上，这将启动<code>Network Load Balancer</code>，它将为您提供单个IP地址，以便将所有流量转发到您的服务。</p>
-
-<p><img src="https://cdn-images-1.medium.com/max/1600/1*P-10bQg_1VheU9DRlvHBTQ.png" alt="1*P-10bQg_1VheU9DRlvHBTQ.png" /></p>
-
-<h3 id="什么时候使用">什么时候使用？</h3>
-
-<p>如果要直接公开服务，这是默认方法。 您指定的端口上的所有流量都将转发到该服务。 没有过滤，没有路由等。这意味着您可以向其发送几乎任何类型的流量，如HTTP，TCP，UDP，Websockets，gRPC等等。</p>
-
-<p>最大的缺点是您使用LoadBalancer公开的每个服务都将获得自己的IP地址，并且您必须为每个公开的服务支付LoadBalancer，这可能会变得昂贵！</p>
-
-<h2 id="ingress">Ingress</h2>
-
-<p>与上述所有示例不同，Ingress实际上不是一种服务。 相反，它位于多个服务的前面，充当集群中的“智能路由器”或入口点。</p>
-
-<p>您可以使用Ingress执行许多不同的操作，并且有许多类型的Ingress控制器，都具有不同的功能。</p>
-
-<p>默认的GKE ingress controller将为您启动HTTP(S)负载均衡器。 这将允许您执行基于路径和子域的路由到后端服务。 例如，您可以将<code>foo.yourdomain.com</code>上的所有内容发送到foo服务，并将<code>youdomain.com/bar/</code>下的所有内容发送到bar服务。</p>
-
-<p><img src="https://cdn-images-1.medium.com/max/1600/1*KIVa4hUVZxg-8Ncabo8pdg.png" alt="1*KIVa4hUVZxg-8Ncabo8pdg.png" /></p>
-
-<p>使用L7 HTTP负载均衡器的GKE上的Ingress对象的YAML可能如下所示：</p>
-
-<pre><code class="language-yaml">apiVersion: extensions/v1beta1
-kind: Ingress
+<pre><code class="language-yaml">apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
 metadata:
-  name: my-ingress
-spec:
-  backend:
-    serviceName: other
-    servicePort: 8080
-  rules:
-  - host: foo.mydomain.com
-    http:
-      paths:
-      - backend:
-          serviceName: foo
-          servicePort: 8080
-  - host: mydomain.com
-    http:
-      paths:
-      - path: /bar/*
-        backend:
-          serviceName: bar
-          servicePort: 8080
+  name: prometheus-querier
+rules:
+  - apiGroups: [&quot;&quot;]
+    resources:
+      - nodes
+      - nodes/proxy
+      - services
+      - services/proxy
+      - endpoints
+      - pods
+      - pods/proxy
+    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]
+  - nonResourceURLs: [&quot;/metrics&quot;]
+    verbs: [&quot;get&quot;]
 </code></pre>
 
-<h3 id="什么时候使用-1">什么时候使用？</h3>
+<p>一旦我们创建了 clusterrole，我们就需要通过运行</p>
 
-<p>Ingress可能是暴露您的服务的最有效方式，但也可能是最复杂的。 有许多类型的Ingress控制器，来自Google Cloud Load Balancer，Nginx，Contour，Istio等。 还有Ingress控制器的插件，如cert-manager，可以为您的服务自动配置SSL证书。</p>
+<pre><code class="language-shell">kubectl create clusterrolebinding prometheus-querier -clusterrole=prometheus-querier -serviceaccount=kube-system:prometheus
+</code></pre>
 
-<p>如果要在同一IP地址下公开多个服务，Ingress是最有用的，并且这些服务都使用相同的L7协议（通常是HTTP）。 如果您使用GCP集成，您只需支付一个负载均衡器，并且因为Ingress是“智能”的，您可以获得大量开箱即用的功能（如SSL，身份验证，路由等）。</p>
+<p>将它绑定到 service account。</p>
+
+<p>现在我们已经配置了我们的集群，接着我们需要配置 Prometheus 实例。</p>
+
+<h2 id="prometheus-配置">Prometheus 配置</h2>
+
+<p>Prometheus 有一个用于 Kubernetes 的简单示例配置; 但是，它是从集群内部运行，并假设默认值在集群外部不起作用。</p>
+
+<p>在集群内部，这就是发现所有节点所需的全部配置。</p>
+
+<p><a href="https://gist.github.com/ConorNevinTHG/704b75a717e6f231a60a48b6c6b7c971#file-in-cluster-node-config-yaml">in-cluster-node-config.yaml · GitHub</a></p>
+
+<pre><code class="language-yaml">kubernetes_sd_configs:
+  - role: node
+</code></pre>
+
+<p>为了使起工作在集群之外，我们需要指向与我们之前创建的 service account 相关联的令牌以及集群的 CA（证书颁发机构）和 Kubernetes REST API 的地址。</p>
+
+<p><a href="https://gist.github.com/ConorNevinTHG/2a30750c50a352dd7bc5643ef7be128b#file-out-of-cluster-node-config-yaml">out-of-cluster-node-config.yaml · GitHub</a></p>
+
+<pre><code class="language-yaml">kubernetes_sd_configs:
+  - api_server: &lt;api server address&gt;
+    role: node
+    bearer_token_file: &lt;path to the token file&gt;
+    tls_config:
+      ca_file: &lt;path to the ca file&gt;
+</code></pre>
+
+<p>这将允许 Prometheus 实例去构建它需要抓取的目标列表，但我们还需要将 token 和 CA 文件添加到配置中，以便能够成功地抓取指标。</p>
+
+<p>现在我们可以向集群发出请求了，但是我们需要进行一些 relabel，以便 Prometheus 实例能够构建正确的外部 URL 以到达目标。</p>
+
+<p>此 relabel 配置将每个标签作为 Prometheus 标签加载到相应节点，将目标地址重写为 API 服务器的地址，并更改度量标准路径，这样就使用 Kubernetes API 上的代理端点。</p>
+
+<p><a href="https://gist.github.com/ConorNevinTHG/758cbed9941655314a3749fe12d8edbc#file-node-relabel-config-yaml">node-relabel-config.yaml · GitHub</a></p>
+
+<pre><code class="language-yaml">relabel_configs:
+  - action: labelmap
+    regex: __meta_kubernetes_node_label_(.+)
+  - target_label: __address__
+    replacement: &lt;api server address&gt;
+  - source_labels: [__meta_kubernetes_node_name]
+    regex: (.+)
+    target_label: __metrics_path__
+    replacement: /api/v1/nodes/${1}/proxy/metrics
+</code></pre>
+
+<p>同时，我们还为每个标识集群的度量标准添加了新的静态标签，因此我们可以轻松区分属于不同集群的度量标准。 最终配置如下所示:</p>
+
+<p><a href="https://gist.github.com/ConorNevinTHG/55ede402ca9a8a1c4a6661b73babe39c#file-full-out-of-cluster-node-config-yaml">full-out-of-cluster-node-config.yaml · GitHub</a></p>
+
+<pre><code class="language-yaml">bearer_token_file: &lt;path to the token file&gt;
+tls_config:
+  ca_file: &lt;path to the ca file&gt;
+scheme: https
+kubernetes_sd_configs:
+  - api_server: &lt;api server address&gt;
+    role: node
+    bearer_token_file: &lt;path to the token file&gt;
+    tls_config:
+      ca_file: &lt;path to the ca file&gt;
+relabel_configs:
+  - action: labelmap
+    regex: __meta_kubernetes_node_label_(.+)
+  - target_label: __address__
+    replacement: &lt;api server address&gt;
+  - source_labels: [__meta_kubernetes_node_name]
+    regex: (.+)
+    target_label: __metrics_path__
+    replacement: /api/v1/nodes/${1}/proxy/metrics
+  - source_labels: []
+    action: replace
+    target_label: kubernetes_cluster
+    replacement: &lt;cluster name or id&gt;
+</code></pre>
+
+<p>有了这个配置，我们仍然需要改变配置来抓取其他目标，node-cadvisor，pods 和服务。 为了抓取 cadvisor 指标，我们需要做的就是复制上面的配置并将指标路径更改为<code>/api/v1/nodes/${1}/proxy/metrics/cadvisor</code>。 对于 pod 和服务，我们需要使用以下 relabel 配置:</p>
+
+<p><a href="https://gist.github.com/ConorNevinTHG/0159f6e02b1fb16f546fd0eeefb7cfe2#file-pod-relabel-config-yaml">pod-relabel-config.yaml · GitHub</a></p>
+
+<pre><code class="language-yaml">relabel_configs:
+  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+    action: keep
+    regex: true
+  - target_label: __address__
+    replacement: &lt;api server address&gt;
+  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
+    regex: ^$
+    replacement: http
+    target_label: __meta_kubernetes_pod_annotation_prometheus_io_scheme
+  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+    regex: (.+)
+    replacement: ${1}
+    target_label: __metrics_path__
+  - source_labels:
+      - __meta_kubernetes_namespace
+      - __meta_kubernetes_pod_annotation_prometheus_io_scheme
+      - __meta_kubernetes_pod_name
+      - __meta_kubernetes_pod_annotation_prometheus_io_port
+      - __metrics_path__
+    regex: (.+);(.+);(.+);(.+);(.+)
+    action: replace
+    target_label: __metrics_path__
+    replacement: /api/v1/namespaces/${1}/pods/${2}:${3}:${4}/proxy${5}
+  - action: labelmap
+    regex: __meta_kubernetes_pod_label_(.+)
+</code></pre>
+
+<p>此配置将过滤所有正在运行的 pod 的列表，并只抓取带有注解<code>prometheus.io/scrape=true</code>的目标，然后使用其他注解构建可抓取地址，以允许我们配置度量端点的端口和路径。</p>
+
+<p><a href="https://gist.github.com/ConorNevinTHG/2d335977daf6e689d17ed581df83ef6f#file-service-relabel-config-yaml">service-relabel-config.yaml · GitHub</a></p>
+
+<pre><code class="language-yaml">relabel_configs:
+  - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+    action: keep
+    regex: true
+  - target_label: __address__
+    replacement: &lt;api server address&gt;
+  - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+    regex: ^$
+    replacement: http
+    target_label: __meta_kubernetes_service_annotation_prometheus_io_scheme
+  - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+    regex: (.+)
+    replacement: ${1}
+    target_label: __metrics_path__
+  - source_labels:
+      - __meta_kubernetes_namespace
+      - __meta_kubernetes_service_annotation_prometheus_io_scheme
+      - __meta_kubernetes_service_name
+      - __meta_kubernetes_service_annotation_prometheus_io_port
+      - __metrics_path__
+    regex: (.+);(.+);(.+);(.+);(.+)
+    action: replace
+    target_label: __metrics_path__
+    replacement: /api/v1/namespaces/${1}/services/${2}:${3}:${4}/proxy${5}
+  - action: labelmap
+    regex: __meta_kubernetes_service_label_(.+)
+</code></pre>
+
+<p>服务的配置几乎没有改变，唯一的差别是使用服务注解构造略有不同的地址。</p>
+
+<h2 id="配置-generation-management">配置 Generation/Management</h2>
+
+<p>现在我们已经完成了所有这些工作，我们需要一种为每个我们想要抓取的集群自动生成此配置的方法，因为手动编写这个配置需要很长时间。 Prometheus 不支持从目录加载配置。 相反，它要求它全部存在于单个文件中，因此我们使用 Ansible 为我们生成文件。</p>
+
+<p>Ansible 有一个模块，允许将多个文件组装成一个名为“assemble”的更大的单个文件，这将使得支持多种不同的 scrape 类型变得更加容易。 简而言之，它还支持验证步骤，我们可以在覆盖旧的验证步骤之前验证我们的配置是否正确。 通过将上面的配置重写为模板，我们可以将每个集群的配置输出到一个目录中，然后将它们组合成一个文件。</p>
+
+<p><a href="https://gist.github.com/ConorNevinTHG/e9e096c7b998298f57a9d82b9783c6c1#file-ansible-assemble-config-yaml">ansible-assemble-config.yaml · GitHub</a></p>
+
+<pre><code class="language-yaml">- name: Assemble prometheus config
+  assemble:
+    src: &quot;{{ prometheus_config_path }}/fragments&quot;
+    dest: &quot;{{ prometheus_config_path }}/prometheus.yaml&quot;
+    validate: &quot;{{ prometheus_bin_path }}/promtool_{{ prometheus_version }} check config %s&quot;
+    backup: yes
+</code></pre>
+
+<p>我们现在有一个可以正常工作的 Prometheus 实例，您现在应该看到群集中的目标列表被自动抓取。</p>
+
+<p>作为集群设置的一部分，我们在集群中安装了两个组件，为我们提供了一些额外的指标：</p>
+
+<ul>
+<li>Kube State Metrics，展示有关集群内各种资源的内部状态的指标</li>
+<li>Node Exporter, 展示集群中每个主机的基础级别度量指标</li>
+</ul>
+
+<p>现在这一切都已到位，每次我们启动新集群时，我们需要做的就是重新生成我们的 Prometheus 配置，并且我们会自动从新集群中抓取所有指标！</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*qi72SThV3Cai-pJoVl6lxw.png" alt="1*qi72SThV3Cai-pJoVl6lxw.png" /></p>
 
                         </div>
                         

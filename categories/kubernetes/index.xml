@@ -6,10 +6,25 @@
     <description>Recent content in Kubernetes on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Sun, 04 Nov 2018 16:14:23 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 05 Nov 2018 10:27:00 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/categories/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>监控多个Kubernetes集群</title>
+      <link>https://kelvinji2009.github.io/blog/monitoring-multiple-kubernetes-clusters/</link>
+      <pubDate>Mon, 05 Nov 2018 10:27:00 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/monitoring-multiple-kubernetes-clusters/</guid>
+      <description>监控多个 Kubernetes 集群 原文
+在 THG，我们为多个团队管理 Kubernetes 集群。 为了有效地监控这些集群，我们在每个数据中心使用单个 Prometheus 实例。
+Prometheus 是一个开源监控工具，Kubernetes 支持其开箱即用，以 Prometheus 格式公开端点上的集群运行状况和操作指标。 Prometheus 还支持使用 Kubernetes REST API 作为源来发现在集群内运行的其他标准度量指标。
+Cluster 身份认证 我们需要做的第一件事是创建一个 service account，Prometheus 实例将使用该帐户对集群进行身份验证。
+要配置 service account 可以访问的内容，您需要设置 clusterrole 和 clusterrolebinding。 以下是 clusterrole 为 Prometheus 提供对我们感兴趣的每个资源的读取访问权限。
+prometheus-querier.yaml · GitHub
+apiVersion: rbac.authorization.k8s.io/v1beta1 kind: ClusterRole metadata: name: prometheus-querier rules: - apiGroups: [&amp;quot;&amp;quot;] resources: - nodes - nodes/proxy - services - services/proxy - endpoints - pods - pods/proxy verbs: [&amp;quot;get&amp;quot;, &amp;quot;list&amp;quot;, &amp;quot;watch&amp;quot;] - nonResourceURLs: [&amp;quot;/metrics&amp;quot;] verbs: [&amp;quot;get&amp;quot;]  一旦我们创建了 clusterrole，我们就需要通过运行</description>
+    </item>
     
     <item>
       <title>Configuring Permissions in Kubernetes With RBAC</title>
