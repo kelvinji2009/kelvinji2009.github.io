@@ -6,10 +6,28 @@
     <description>Recent content in Blogs on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Mon, 05 Nov 2018 11:45:10 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 23 Nov 2018 22:57:28 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Service Mesh遇见Event Mesh: Event-Driven型企业新的架构层</title>
+      <link>https://kelvinji2009.github.io/blog/service-mesh-meet-event-mesh/</link>
+      <pubDate>Fri, 23 Nov 2018 22:57:28 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/service-mesh-meet-event-mesh/</guid>
+      <description>Service Mesh 遇见 Event Mesh: Event-Driven 型企业新的架构层 原文
+Service Mesh被用作微服务的基础设施层，使通信变得更加灵活，可靠和快速。 它得到了谷歌，微软，IBM，红帽和 Pivotal 等行业巨头的推动，并且正在推出 Kubernetes，OpenShift 和 Pivotal Container Service（PKS）等平台和服务。
+虽然服务网格可以很好地支持同步 RESTful 和一般&amp;lt;请求-回复&amp;gt;的交互，但它不支持异步、事件驱动的交互，也不适合将云原生微服务与遗留应用程序连接，也不适用于 IoT。
+现代企业正在将事件驱动架构作为其数字化转型的一部分，每个事件驱动的企业都需要一个中枢神经系统来快速、可靠和安全地将事件从它们发生的地方发送到它们需要去的地方。
+这个中枢神经系统可以被视为 Event Mesh（事件网格） - 您架构中的一个新层。
+事件网格作为服务网格的补充，可以做为应用程序的连接层，以提供企业实现其数字化转型目标所需的全套应用程序间通信模式。
+什么是 Event Mesh？ 事件网格对于事件驱动的应用程序，就好比是服务网格对于 RESTful 应用程序：一个架构层，无论在哪里部署这些应用程序（非云，公有云或者私有云），都可以动态路由某个应用程序的事件并使其被其他应用程序所接收。 事件网格由内部连通的 Event broker(事件代理)网络来创建和启用。
+Event Mesh vs. Service Mesh 事件网格可以补充服务网格。 事件网格和服务网格类似，它们可以在应用程序之间实现更好的通信，并允许应用程序通过将某些功能放在网络层和应用程序层之间使我们可以更多地关注业务逻辑。 但是，相比之下，有一些重要的区别：
+ 服务网格连接云环境中的微服务，例如 Kubernetes，Amazon ECS，Google Kubernetes Engine，IBM Cloud 和 Alibaba。 事件网格不仅连接微服务（容器化或其他），还连接遗留的应用程序、云原生服务以及可在云和非云环境中运行的各种设备和数据源/接收器。 事件网格可以将任何事件源连接到任何事件处理程序，无论它们在何处部署。  Event Mesh 的特点 事件网格有三个特征定义。 事件网格是：
+ 由内部连通的 Event Broker 组合 与环境无关 动态  事件网格由 Event Broker（1）网络创建和启用的事实意味着它本质上是事件驱动的。</description>
+    </item>
     
     <item>
       <title>Istio Routing 极简教程</title>
