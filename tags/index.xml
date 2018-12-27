@@ -6,10 +6,19 @@
     <description>Recent content in Tags on kelvinji2009</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Mon, 23 Jul 2018 14:21:17 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 27 Dec 2018 12:17:51 +0800</lastBuildDate>
     
 	<atom:link href="https://kelvinji2009.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Bloc</title>
+      <link>https://kelvinji2009.github.io/tags/bloc/</link>
+      <pubDate>Thu, 27 Dec 2018 12:17:51 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/tags/bloc/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Docker</title>
@@ -35,6 +44,15 @@
       <pubDate>Fri, 23 Nov 2018 22:57:28 +0800</pubDate>
       
       <guid>https://kelvinji2009.github.io/tags/event-mesh/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Flutter</title>
+      <link>https://kelvinji2009.github.io/tags/flutter/</link>
+      <pubDate>Thu, 27 Dec 2018 12:17:51 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/tags/flutter/</guid>
       <description></description>
     </item>
     

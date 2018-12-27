@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Flutter on kelvinji2009</title>
+    <link>https://kelvinji2009.github.io/tags/flutter/</link>
+    <description>Recent content in Flutter on kelvinji2009</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Thu, 27 Dec 2018 12:17:51 +0800</lastBuildDate>
+    
+	<atom:link href="https://kelvinji2009.github.io/tags/flutter/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>响应式编程：从Streams到BLoC</title>
+      <link>https://kelvinji2009.github.io/blog/reactive-programming-streams-bloc/</link>
+      <pubDate>Thu, 27 Dec 2018 12:17:51 +0800</pubDate>
+      
+      <guid>https://kelvinji2009.github.io/blog/reactive-programming-streams-bloc/</guid>
+      <description>响应式编程：从 Streams 到 BLoC 原文
+这篇文章主要介绍 Streams，BLoC 和 Reactive Programming 的概念、理论和实践范例。
+难度：适中
+介绍 我花了很长时间才找到介绍 Reactive Programming，BLoC 和 Streams 概念的方法。
+由于这可以对构建应用程序的方式做出重大改变，我想要一个实际示例来说明：
+ 很可能如果你不使用它们，有时可能会难以编码，且性能更低 当然包括使用它们的好处 使用它们的影响（正面和/或负面）  我做了一个实际例子是一个虚构的应用程序。简而言之，它允许用户查看在线目录中的电影列表，按流派和发布日期过滤它们，标记/取消收藏。 当然，一切都是互动的，用户动作可以在不同的页面中或在同一个页面内发生，并且对视觉方面有实时的影响。
+这是一个显示此应用程序的动画。
+当您进入此页面以获取有关 Reactive Programming，BLoC 和 Streams 的信息时，我将首先介绍它们的理论基础， 此后，我将向您展示如何在实践中运用它们。
+本文的补充内容提供了一些实际用例，可以在此链接找到。
+什么是 Stream? 介绍 为了便于想象 Stream 的概念，只需要想象一个有两端的管道，只能从一端插入一些东西。 当您将某物插入管道时，它会在管道内流动并从另一端流出。
+在 Flutter 中，
+ 这个管道被叫做 Stream 为了控制 Stream，我们通常使用 StreamController 为了在 Stream 中插入一些东西，StreamController 公开了一个名为 StreamSink 的“入口”，可以通过 sink 属性访问 流出 Stream 的方式由 StreamController 通过 stream 属性公开  我专门使用了“通常”这个词，因为很可能不使用任何 StreamController。 但是，正如您将在本文中看到的那样，我将一定使用 StreamControllers。</description>
+    </item>
+    
+  </channel>
+</rss>
